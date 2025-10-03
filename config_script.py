@@ -113,11 +113,11 @@ optimizer = optax.chain(
   optax.adamw(learning_rate=1e-3),
 )
 
-x_bg0 = jnp.ones((config['n_bg'],)) * 0
-x_c0 = jnp.ones((config['n_bg'],)) * 0
-x_t0 = jnp.ones((config['n_bg'],)) * 0
+x_bg0 = jnp.ones((config['n_bg'],)) * 0.01
+x_c0 = jnp.ones((config['n_bg'],)) * 0.01
+x_t0 = jnp.ones((config['n_bg'],)) * 0.01
 x0 = (x_bg0, x_c0, x_t0)
-z0 = jnp.ones((config['n_nm'],)) * 0
+z0 = jnp.ones((config['n_nm'],)) * 0.01
 
 #declare testing params
 n_seeds = 100

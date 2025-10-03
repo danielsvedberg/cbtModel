@@ -29,37 +29,51 @@ def plot_loss(losses_nm):
 def plot_output(all_ys):
     # Plot output activity (mean ± SEM)
     #fig = plt.figure(figsize=(4, 3))
-    fig, axs = plt.subplots(1, 2, figsize=(4, 2), sharey=True)
+    fig, axs = plt.subplots(5, 3, figsize=(6, 8), sharey=True)
     colors = plt.cm.berlin(jnp.linspace(0, 1, all_ys.shape[1]))
-    ax = axs[0]
-    #plot each individual trace first
-    for i in range(all_ys.shape[0]):
-        for j in range(all_ys.shape[1]):
-            ax.plot(all_ys[i, j, :, 0], c=colors[j], linewidth=0.1)
-    ax = axs[1]
-    mean_ys, sem_ys = mf.compute_mean_sem(all_ys)
-    for i in range(mean_ys.shape[0]):
-        ax.plot(mean_ys[i, :, 0], c=colors[i])
-        ax.fill_between(
-            jnp.arange(mean_ys.shape[1]),
-            mean_ys[i, :, 0] - sem_ys[i, :, 0],
-            mean_ys[i, :, 0] + sem_ys[i, :, 0],
-            color=colors[i],
-            alpha=0.3,
-        )
-    plt.title(f'Output (mean ± SEM)')
-    plt.legend()
-    plt.tight_layout()
+    for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc', 'nm']):
+
+
+        ax = axs[idx]
+        #plot each individual trace first
+        for i in range(all_ys.shape[0]):
+            for j in range(all_ys.shape[1]):
+                ax.plot(all_ys[i, j, :, 0], c=colors[j], linewidth=0.1)
+        ax = axs[1]
+        mean_ys, sem_ys = mf.compute_mean_sem(all_ys)
+        for i in range(mean_ys.shape[0]):
+            ax.plot(mean_ys[i, :, 0], c=colors[i])
+            ax.fill_between(
+                jnp.arange(mean_ys.shape[1]),
+                mean_ys[i, :, 0] - sem_ys[i, :, 0],
+                mean_ys[i, :, 0] + sem_ys[i, :, 0],
+                color=colors[i],
+                alpha=0.3,
+            )
+        plt.title(f'Output (mean ± SEM)')
+        plt.legend()
+        plt.tight_layout()
     plt.show()
 
 
 def plot_activity_by_area(all_xs, all_zs):
-    fig = plt.figure(figsize=(8, 6))
-    for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc', 'nm']):
-        ax = plt.subplot(2, 3, idx + 1)
+    fig, axs = plt.subplots(5, 2, figsize=(6, 8), sharex=True, sharey=True)
+    for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
         area_activity = mf.get_brain_area(name, all_xs, all_zs)
-        mean_act, sem_act = mf.compute_mean_sem(jnp.mean(area_activity, axis=3))  # Avg across neurons
+        nrn_avg = jnp.mean(area_activity, axis=3)
+        # Avg across neurons
+        mean_act, sem_act = mf.compute_mean_sem(nrn_avg)
         colors = plt.cm.berlin(jnp.linspace(0, 1, mean_act.shape[0]))
+
+        #plot individual waves
+        ax = axs[idx, 0]
+        for i in range(area_activity.shape[1]):
+            condition_activity = area_activity[:, i, :]
+            for j in range(condition_activity.shape[0]):
+                ax.plot(condition_activity[j], c=colors[i], label=f'Condition {i}', linewidth=0.1)
+
+        #plot binned waves
+        ax = axs[idx, 1]
         for i in range(mean_act.shape[0]):
             ax.plot(mean_act[i], c=colors[i], label=f'Condition {i}')
             ax.fill_between(
@@ -70,6 +84,7 @@ def plot_activity_by_area(all_xs, all_zs):
                 alpha=0.3,
             )
         ax.set_title(f'{name}')
+
     plt.suptitle('Aligned to trial start')
     plt.tight_layout()
     plt.show()
@@ -90,14 +105,14 @@ def plot_cue_algn_activity(all_xs, all_zs, noiseless=False):
     aligned_zs = jnp.array(aligned_zs)
     x_axis = (jnp.arange(new_T + 100) - 100) / 100
 
-    fig, axs = plt.subplots(5, 3, figsize=(6, 8), sharex=True)
+    fig, axs = plt.subplots(5, 3, figsize=(6, 8), sharex=True, sharey=True)
     for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
         area_activity = mf.get_brain_area(name, aligned_xs, aligned_zs)
         colors = plt.cm.coolwarm(jnp.linspace(0, 1, area_activity.shape[1]))
         area_activity = area_activity.mean(axis=-1)
         ax = axs[idx, 0]
         for i in range(area_activity.shape[1]):
-            condition_activity = area_activity[:, i]
+            condition_activity = area_activity[:, i, :]
             for j in range(condition_activity.shape[0]):
                 ax.plot(x_axis, condition_activity[j], c=colors[i], label=f'Condition {i}', linewidth=0.1)
         ax = axs[idx, 1]
