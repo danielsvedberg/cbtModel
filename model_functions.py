@@ -21,8 +21,8 @@ def inh(w):
 
 def nln(x):
     #x = jnp.maximum(0, x)
-    return jnp.tanh(x)
-    #return jax.nn.sigmoid(x)
+    #return jnp.tanh(x)
+    return jax.nn.sigmoid(x)
 
 
 def multiregion_nmrnn(
@@ -63,15 +63,15 @@ def multiregion_nmrnn(
     J_t = params['J_t']
     B_tbg = params['B_tbg']
     J_nm = params['J_nm']
-    J_nmc = params['J_nmc']
+    #J_nmc = params['J_nmc']
     B_nmc = params['B_nmc']
     m = params['m']
     c = params['c']
     C = params['C']
     rb = params['rb']
-    U = params['U']  #redefined below #TODO figure out if U should be drawn from params
-    V_bg = params['V_bg']
-    V_c = params['V_c']
+    #U = params['U']  #redefined below #TODO figure out if U should be drawn from params
+    #V_bg = params['V_bg']
+    #V_c = params['V_c']
 
     tau_c = tau_x
     tau_bg = tau_x
@@ -80,8 +80,8 @@ def multiregion_nmrnn(
 
     num_bg_cells = J_bg.shape[0]
     num_c_cells = J_c.shape[0]
-    num_t_cells = J_t.shape[0]
-    num_nm_cells = J_nm.shape[0]
+    #num_t_cells = J_t.shape[0]
+    #num_nm_cells = J_nm.shape[0]
     n_d1_cells = num_bg_cells // 2
     n_d2_cells = num_bg_cells - n_d1_cells
     T = inputs.shape[0]
@@ -110,6 +110,7 @@ def multiregion_nmrnn(
 
         if modulation:
             U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))  # direct/indirect
+
             V_bg = jnp.ones((num_bg_cells, 1))
             V_c = jnp.ones((num_c_cells, 1))
             s = jax.nn.sigmoid(exc(m) @ nln(x_nm) + c)  # neuromodulatory signal from snc (1D for now)
@@ -130,6 +131,7 @@ def multiregion_nmrnn(
         tbg = jnp.concatenate((exc(B_tbg[:, : n_d1_cells]), inh(B_tbg[:, n_d1_cells:])),
                               axis=1)  # two subpopulations have the opposite net effects
         x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG, inhibitory
+
 
         # update x_nm
         x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
@@ -160,10 +162,9 @@ batched_nm_rnn = vmap(
 )
 
 
-def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_targets, batch_mask, rng_keys, orth_u=True,
+def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_targets, batch_mask, rng_keys,
                         modulation=True, noise_std=0):
     ys, _, _ = batched_nm_rnn(params, x0, z0, batch_inputs, tau_x, tau_z, modulation, None, noise_std, rng_keys)
-
     # Create the final mask based on first over-threshold index
     T_start_move = jnp.argmax(batch_targets, axis=1)
     T = batch_inputs.shape[1]
@@ -178,9 +179,10 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
                              idxs_to_mask)  # for all trials with no movement, start the mask at the end
     value_mask = jnp.where(Tarray > (idxs_to_mask + 60), 0, 1)  # Create the mask here
     value_mask = jnp.where(Tarray < idxs_to_mask, 0, value_mask)
-    batch_targets = value_mask[..., None]  #* batch_targets
+    batch_targets = value_mask[..., None] #* batch_targets
 
     return jnp.sum(((ys - batch_targets) ** 2) * batch_mask) / jnp.sum(batch_mask)
+
 
 
 def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters, tau_x, tau_z,
@@ -201,7 +203,7 @@ def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters
 
         # Compute loss and gradients
         loss_value, grads = jax.value_and_grad(batched_nm_rnn_loss)(
-            params, x0, z0, inputs, tau_x, tau_z, targets, loss_masks, batch_rng_keys, orth_u=orth_u,
+            params, x0, z0, inputs, tau_x, tau_z, targets, loss_masks, batch_rng_keys,
             modulation=modulation, noise_std=noise_std
         )
         updates, opt_state = optimizer.update(grads, opt_state, params)
@@ -247,21 +249,41 @@ def self_timed_movement_task(T_start, T_cue, T_wait, T_movement, T, null_trial=F
 
     def _single(interval_ind):
         t_start = T_start[interval_ind]
-        t_cue_end = t_start + T_cue
         t_wait_end = t_start + T_wait
-        t_movement_end = t_wait_end + T_movement
+
+        # Initialize zero arrays for inputs, outputs, and masks
+        inputs = jnp.zeros((T, 1))
+        outputs = jnp.zeros((T, 1))
+        mask = jnp.ones((T, 1))
+
+        # Use boolean indexing instead of .at[] for the mask
+        time_indices = jnp.arange(T)[:, None]  # Shape (T, 1) to match mask
+        mask = jnp.where(time_indices < t_start, 0, mask)
+        #mask = jnp.where(time_indices >= t_wait_end, 0, mask)
+
+        # Dynamically update the slices for inputs and outputs
+        inputs = jax.lax.dynamic_update_slice(inputs, jnp.ones((T_cue, 1)), (t_start, 0))
+        outputs = jax.lax.dynamic_update_slice(outputs, jnp.ones((T_movement, 1)), (t_wait_end, 0))
+
+        return inputs, outputs, mask
+
+    '''    def _single(interval_ind):
+        t_start = T_start[interval_ind]
+        t_wait_end = t_start + T_wait
 
         # Initialize zero arrays for inputs, outputs, and masks
         inputs = jnp.zeros((T, 1))
         outputs = jnp.zeros(
             (T, 1))  #outputs is a mask length of trial, with reward for Y=1 between T_movement and T_wait_end)
         mask = jnp.ones((T, 1))
+        mask = mask.at[:t_start].set(0)
+        mask = mask.at[t_wait_end:].set(0)
 
         # Dynamically update the slices
         inputs = jax.lax.dynamic_update_slice(inputs, jnp.ones((T_cue, 1)), (t_start, 0))
         outputs = jax.lax.dynamic_update_slice(outputs, jnp.ones((T_movement, 1)), (t_wait_end, 0))
 
-        return inputs, outputs, mask
+        return inputs, outputs, mask'''
 
     inputs, outputs, masks = vmap(_single)(jnp.arange(num_starts))
 
@@ -415,7 +437,7 @@ def get_brain_area(brain_area, xs=None, zs=None, bsln_sub=True):
     if bsln_sub:
         bsln = out[:, :100].mean(axis=1)
         out = out - bsln[:, None]
-    return get_brain_area_(brain_area, xs, zs)
+    return out#get_brain_area_(brain_area, xs, zs)
 
 
 def sem(data, axis=0):
