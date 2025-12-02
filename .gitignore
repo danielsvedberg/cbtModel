@@ -1,4 +1,11 @@
+#all files with .svg and .png extension
+*.svg
+*.png
+
 #general files for mac
 .DS_Store
 .idea
 .xml
+
+#ignore the plots folder
+plots/

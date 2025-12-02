@@ -24,15 +24,15 @@ def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
 
     # nm parameters
     J_nm = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[7], (n_nm, n_nm))
-    J_nmc = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
+    #J_nmc = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
     B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))
 
     m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
     c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
 
-    U = (1 / math.sqrt(n_bg)) * jr.normal(skeys[12], (1, n_bg))
-    V_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[13], (1, n_bg))
-    V_c = (1 / math.sqrt(n_bg)) * jr.normal(skeys[14], (1, n_bg))
+    #U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))#(1 / math.sqrt(n_bg)) * jr.normal(skeys[12], (1, n_bg))
+    #V_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[13], (1, n_bg))
+    #V_c = (1 / math.sqrt(n_bg)) * jr.normal(skeys[14], (1, n_bg))
 
     # readout params
     C = (1 / math.sqrt(n_bg)) * jr.normal(skeys[15], (output_dim, n_bg))
@@ -47,15 +47,15 @@ def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
         'J_t': J_t,
         'B_tbg': B_tbg,
         'J_nm': J_nm,
-        'J_nmc': J_nmc,
+        #'J_nmc': J_nmc,
         'B_nmc': B_nmc,
         'm': m,
         'c': c,
         'C': C,
-        'rb': rb,
-        'U': U,
-        'V_bg': V_bg,
-        'V_c': V_c
+        'rb': rb#,
+        #'U': U,
+        #'V_bg': V_bg,
+        #'V_c': V_c
     }
 
 #generate a key
@@ -78,7 +78,7 @@ default_config = dict(
     # Data Generation
     #T_start = jnp.arange(300,405,5),
     #choose 200 random numbers between 100 and 400 for T_start
-    T_start=jr.randint(key, shape=(200,), minval=100, maxval=400),
+    T_start=jr.randint(key, shape=(100,), minval=100, maxval=400),
     T_cue=10,
     T_wait=300,
     T_movement=300, #three second window to move
@@ -113,11 +113,11 @@ optimizer = optax.chain(
   optax.adamw(learning_rate=1e-3),
 )
 
-x_bg0 = jnp.ones((config['n_bg'],)) * 0.01
-x_c0 = jnp.ones((config['n_bg'],)) * 0.01
-x_t0 = jnp.ones((config['n_bg'],)) * 0.01
+x_bg0 = jnp.ones((config['n_bg'],)) * 0.1
+x_c0 = jnp.ones((config['n_bg'],)) * 0.1
+x_t0 = jnp.ones((config['n_bg'],)) * 0.1
 x0 = (x_bg0, x_c0, x_t0)
-z0 = jnp.ones((config['n_nm'],)) * 0.01
+z0 = jnp.ones((config['n_nm'],)) * 0.1
 
 #declare testing params
 n_seeds = 100
