@@ -177,8 +177,8 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
     # replace all idxs_to_mask that are lower than T_start+10 with T
     idxs_to_mask = jnp.where(idxs_to_mask < T_start_move, T_start_move,
                              idxs_to_mask)  # for all trials with no movement, start the mask at the end
-    value_mask = jnp.where(Tarray > (idxs_to_mask + 60), 0, 1)  # Create the mask here
-    value_mask = jnp.where(Tarray < idxs_to_mask, 0, value_mask)
+    value_mask = jnp.where(Tarray > (idxs_to_mask + 60), 0.25, 0.75)  # Create the mask here
+    value_mask = jnp.where(Tarray < idxs_to_mask, 0.25, value_mask)
     batch_targets = value_mask[..., None] #* batch_targets
 
     return jnp.sum(((ys - batch_targets) ** 2) * batch_mask) / jnp.sum(batch_mask)
@@ -252,8 +252,8 @@ def self_timed_movement_task(T_start, T_cue, T_wait, T_movement, T, null_trial=F
         t_wait_end = t_start + T_wait
 
         # Initialize zero arrays for inputs, outputs, and masks
-        inputs = jnp.zeros((T, 1))
-        outputs = jnp.zeros((T, 1))
+        inputs = jnp.ones((T, 1))*0.25
+        outputs = jnp.ones((T, 1))*0.25
         mask = jnp.ones((T, 1))
 
         # Use boolean indexing instead of .at[] for the mask
@@ -262,8 +262,8 @@ def self_timed_movement_task(T_start, T_cue, T_wait, T_movement, T, null_trial=F
         #mask = jnp.where(time_indices >= t_wait_end, 0, mask)
 
         # Dynamically update the slices for inputs and outputs
-        inputs = jax.lax.dynamic_update_slice(inputs, jnp.ones((T_cue, 1)), (t_start, 0))
-        outputs = jax.lax.dynamic_update_slice(outputs, jnp.ones((T_movement, 1)), (t_wait_end, 0))
+        inputs = jax.lax.dynamic_update_slice(inputs, jnp.ones((T_cue, 1))*0.75, (t_start, 0))
+        outputs = jax.lax.dynamic_update_slice(outputs, jnp.ones((T_movement, 1))*0.75, (t_wait_end, 0))
 
         return inputs, outputs, mask
 
