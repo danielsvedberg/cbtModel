@@ -85,7 +85,7 @@ default_config = dict(
     T=900,
     # Training
     num_nm_only_iters=0,
-    num_full_train_iters=10000,
+    num_full_train_iters=2000,
     keyind=13,
 )
 
@@ -123,7 +123,7 @@ z0 = jnp.ones((config['n_nm'],)) * 0.01
 n_seeds = 100
 test_noise_std = 0.2 # Specify noise standard deviation for testing
 #test_start_t = jnp.arange(300,405,5)
-test_start_t = jnp.arange(275, 330, 5)
+test_start_t = jnp.arange(270, 330, 10)
 #opto params
 n_opto_seeds = 1000
 opto_tstart = 250 #start of cue for opto experiments
