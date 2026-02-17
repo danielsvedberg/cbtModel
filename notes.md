@@ -1,8 +1,3 @@
-* Changed to sigmoid
-* Changed grad norm
-* Changed weight initialization
-* Changed D1 / D2 ratio calculation, drop baseline subtracting
-* Changed task target to 0.25 / 1
 * Changed opto strength to 3 * stronger
 * Changed activation function: tanh → sigmoid in `nln()`
 * Changed gradient clipping: `clip(1.0)` → `clip_by_global_norm(1.0)`
