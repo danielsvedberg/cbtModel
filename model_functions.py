@@ -20,10 +20,10 @@ def inh(w):
 
 
 def nln(x):
-    #x = jnp.maximum(0, x)
-    return jnp.tanh(x)
-    #return jax.nn.sigmoid(x)
-
+    # x = jnp.maximum(0, x)
+    # return jnp.tanh(x)
+    return jax.nn.sigmoid(x)
+    # return jax.nn.softplus(x - 4.0)
 
 def multiregion_nmrnn(
         params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0, rng_key=None
@@ -171,7 +171,7 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
     Tarray = jnp.arange(T)
     # Assuming ys has shape (batch_size, time_steps, output_dim)
     # Assuming ys has shape (batch_size, time_steps, output_dim)
-    over_thresh = ys >= 0.75
+    over_thresh = ys >= 0.5
     first_over_threshold_indices = jnp.argmax(over_thresh, axis=1)
     idxs_to_mask = first_over_threshold_indices  # Indices to be masked
     # replace all idxs_to_mask that are lower than T_start+10 with T
@@ -180,6 +180,7 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
     value_mask = jnp.where(Tarray > (idxs_to_mask + 60), 0, 1)  # Create the mask here
     value_mask = jnp.where(Tarray < idxs_to_mask, 0, value_mask)
     batch_targets = value_mask[..., None] #* batch_targets
+    batch_targets = 0.25 + batch_targets * 0.75  # set baseline to 0.25 and movement target to 0.75
 
     return jnp.sum(((ys - batch_targets) ** 2) * batch_mask) / jnp.sum(batch_mask)
 
@@ -253,7 +254,7 @@ def self_timed_movement_task(T_start, T_cue, T_wait, T_movement, T, null_trial=F
         t_wait_end = t_start + T_wait
         t_movement_end = t_wait_end + T_movement
 
-        # Initialize zero arrays for inputs, outputs, and masks
+        # Initialize arrays for inputs, outputs, and masks
         inputs = jnp.zeros((T, 1))
         outputs = jnp.zeros(
             (T, 1))  #outputs is a mask length of trial, with reward for Y=1 between T_movement and T_wait_end)
@@ -412,12 +413,32 @@ def get_brain_area_(brain_area, xs=None, zs=None):
         raise ValueError('Invalid brain area')
 
 
-def get_brain_area(brain_area, xs=None, zs=None, bsln_sub=True):
+def get_brain_area(brain_area, xs=None, zs=None, bsln_sub=True, as_rate=False):
+    """
+    Extract activity from a specific brain area.
+
+    Args:
+        brain_area: Name of brain area ('D1', 'D2', 'Cortex', 'Thalamus', 'SNc', etc.)
+        xs: State variables from RNN
+        zs: Neuromodulator state variables
+        bsln_sub: If True, subtract baseline activity (first 100 timesteps)
+        as_rate: If True, apply nln() to convert states to firing rates [0,1]
+                 Should be True for quantitative analysis (ratios, correlations)
+                 Can be False for qualitative visualization of raw states
+
+    Returns:
+        Neural activity (raw states or firing rates, optionally baseline-subtracted)
+    """
     out = get_brain_area_(brain_area, xs, zs)
+
+    if as_rate:
+        out = nln(out)  # Apply sigmoid: states → rates [0,1]
+
     if bsln_sub:
         bsln = out[:, :100].mean(axis=1)
         out = out - bsln[:, None]
-    return out#get_brain_area_(brain_area, xs, zs)
+
+    return out
 
 
 def sem(data, axis=0):
@@ -474,6 +495,14 @@ def remove_outliers_from_array(data, threshold=3):
 
 
 def get_d1_d2_ratio(all_xs, t_start=None, t_end=None, avg_time=False, remove_outliers=True):
+    """
+    Calculate D1/D2 activity ratio as a proportion: D1 / (D1 + D2).
+
+    Uses firing rates [0,1] without baseline subtraction to ensure:
+    - All rates are positive (biologically valid)
+    - Ratio is bounded [0,1] and interpretable
+    - No division by zero or negative denominators
+    """
     if t_start is None:
         t_start = 100
     if t_end is None:
@@ -483,30 +512,40 @@ def get_d1_d2_ratio(all_xs, t_start=None, t_end=None, avg_time=False, remove_out
     brain_areas = ['D1', 'D2']
     area_activities = []
     for area in brain_areas:
-        area_activity = get_brain_area(area, all_xs)
+        # Use firing rates without baseline subtraction for quantitative analysis
+        area_activity = get_brain_area(area, all_xs, bsln_sub=False, as_rate=True)
         aa1 = jnp.stack(
-            [align_to_cue(area_activity[seed], cs.test_start_t) for seed in range(cs.n_seeds)]
+            [align_to_cue(area_activity[seed], cs.test_start_t, bsln_sub=False) for seed in range(cs.n_seeds)]
         )
-        aa1 = baseline_subtract(aa1)
+        # No additional baseline subtraction - we want absolute firing rates
 
         aa2 = aa1[:, :, t_start:t_end, :]  #get the pre-movement activity
         aa3 = aa2.mean(axis=3)  #average across neurons
         #aa4 = aa3.mean(axis=2) #average across time
         area_activities.append(aa3)
 
-    #for each trial (in dim 0), calculate the ratio of D1 to D2 activity
-    #ratio = area_activities[0] / area_activities[1]
-    ratio = area_activities[0] - area_activities[1]
     if avg_time:
-        ratio = ratio.mean(axis=2)
+        area_activities = [aa.mean(axis=2) for aa in area_activities]
+
+    #for each trial (in dim 0), calculate the ratio of D1 to D2 activity
+    ratio = area_activities[0] / (area_activities[0] + area_activities[1])
+    # ratio = area_activities[0] - area_activities[1]
+    # if avg_time:
+    #    ratio = ratio.mean(axis=2)
     if remove_outliers:
-        ratio = remove_outliers_from_array(ratio)
+        ratio = remove_outliers_from_array(ratio.T).T
 
     #ratio = ratio.flatten()
     return ratio
 
 
 def get_slope(all_xs, t_start=None, t_end=None, avg_neurons=False, remove_outliers=True):
+    """
+    Calculate slope of activity ramping after cue onset.
+
+    Uses firing rates to ensure slopes represent biologically meaningful
+    changes in neural activity (rates/timestep) rather than raw state changes.
+    """
     if t_start is None:
         t_start = 20
     if t_end is None:
@@ -515,10 +554,14 @@ def get_slope(all_xs, t_start=None, t_end=None, avg_neurons=False, remove_outlie
     xs_slope = []
     for i in range(len(all_xs)):
         xs = all_xs[i]
+        # First align to cue
         aligned = jnp.stack(
-            [align_to_cue(xs[seed], cs.test_start_t) for seed in range(cs.n_seeds)])
+            [align_to_cue(xs[seed], cs.test_start_t, bsln_sub=False) for seed in range(cs.n_seeds)])
+        # Convert to firing rates
+        aligned = nln(aligned)
+        # Then baseline subtract the rates
         aligned = baseline_subtract(aligned)
-        #get the firing rate 100ms after the cue
+        #get the firing rate change from t_start to t_end after the cue
         start = aligned[:, :, t_start, :]
         end = aligned[:, :, t_end, :]
         slope = (end - start) / t_elap

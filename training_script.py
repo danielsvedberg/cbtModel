@@ -2,6 +2,7 @@ from model_functions import *
 from config_script import *
 import pickle as pkl
 import plotting_functions as pf
+
 all_inputs, all_outputs, all_masks = self_timed_movement_task(config['T_start'], config['T_cue'], config['T_wait'], config['T_movement'], config['T'])
 
 ####TRAINING###############

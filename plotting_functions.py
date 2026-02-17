@@ -59,7 +59,7 @@ def plot_output(all_ys):
 def plot_activity_by_area(all_xs, all_zs):
     fig, axs = plt.subplots(5, 2, figsize=(6, 8), sharex=True)
     for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
-        area_activity = mf.get_brain_area(name, all_xs, all_zs)
+        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=True, as_rate=True)
         nrn_avg = jnp.mean(area_activity, axis=3)
         # Avg across neurons
         mean_act, sem_act = mf.compute_mean_sem(nrn_avg)
@@ -109,7 +109,7 @@ def plot_cue_algn_activity(all_xs, all_zs, noiseless=False):
 
     fig, axs = plt.subplots(5, 4, figsize=(12, 8), sharex=True, sharey=False)
     for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
-        area_activity = mf.get_brain_area(name, all_xs, all_zs)
+        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=True, as_rate=True)
         area_activity = jnp.stack(
             [mf.align_to_cue(area_activity_seed, cs.test_start_t, new_T=new_T) for area_activity_seed in area_activity]
         )
@@ -245,9 +245,15 @@ def bin_normal_data(x, target_bins=10, min_per_bin=3,
 
     x = np.asarray(x)
 
+    # Filter out NaN values first
+    x_valid = x[~np.isnan(x)]
+
+    if len(x_valid) < min_per_bin:
+        return None, None, f"Not enough valid data ({len(x_valid)} values, need at least {min_per_bin})."
+
     # 1. Determine central range, ignoring outliers
-    low, high = np.percentile(x, [pct_low, pct_high])
-    central = x[(x >= low) & (x <= high)]
+    low, high = np.percentile(x_valid, [pct_low, pct_high])
+    central = x_valid[(x_valid >= low) & (x_valid <= high)]
 
     # 2. Determine number of bins allowed
     max_bins_possible = len(central) // min_per_bin
@@ -288,7 +294,14 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
     # Define the response time bins (left closed, right open)
     # get the mean
     #bin_boundaries = [2.0, 2.2, 2.4, 2.6, 2.8, 3.0, 3.2, 3.4, 3.6, 3.8]
-    _, bin_boundaries, _ = bin_normal_data(response_times)
+    _, bin_boundaries, error_msg = bin_normal_data(response_times)
+
+    # Handle case where there's not enough data to bin
+    if bin_boundaries is None:
+        print(f"Warning: Cannot create binned response plot - {error_msg}")
+        print(f"Valid response times: {np.sum(~np.isnan(response_times))}/{response_times.size}")
+        return
+
     bin_boundaries = np.round(bin_boundaries,2)
 
 
@@ -394,7 +407,7 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
             zs_bin = binned_zs[bin_idx]
 
             # Get the brain area activity (aligning to the cue)
-            area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin)  # trials * T * N
+            area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
 
             # Compute mean and SEM for the current bin
             mean_area_activity = jnp.mean(area_activity, axis=-1)  # trials * T
@@ -446,8 +459,8 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
         zs_bin = binned_zs[bin_idx]
 
         # Get the brain area activity (aligning to the cue)
-        d1_activity = mf.get_brain_area('D1', xs=xs_bin, zs=zs_bin)  # trials * T * N
-        d2_activity = mf.get_brain_area('D2', xs=xs_bin, zs=zs_bin)  # trials * T * N
+        d1_activity = mf.get_brain_area('D1', xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
+        d2_activity = mf.get_brain_area('D2', xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
 
         #get rid of all negative values in mean_ratio
         mean_d1 = jnp.mean(d1_activity, axis=-1)  # trials * T
@@ -555,7 +568,7 @@ def plot_opto_inh(opto_ys, opto_xs, opto_zs, newT=900):
 
         for stim_idx, label in enumerate(label_list):
             resps = resp_times[stim_idx]
-            area_activity = mf.get_brain_area(name, inh_xs[stim_idx], inh_zs[stim_idx]).mean(
+            area_activity = mf.get_brain_area(name, inh_xs[stim_idx], inh_zs[stim_idx], bsln_sub=True, as_rate=True).mean(
                 axis=-1)
             #get all indices where resps is nan, and remove the corresponding indices in the 0th dim of area_activity
             mask = jnp.isnan(resps)
@@ -638,7 +651,7 @@ def plot_opto_stim(opto_ys, opto_xs, opto_zs, newT=900):
 
         for stim_idx, label in enumerate(label_list):
             resps = resp_times[stim_idx]
-            area_activity = mf.get_brain_area(name, stim_xs[stim_idx], stim_zs[stim_idx]).mean(
+            area_activity = mf.get_brain_area(name, stim_xs[stim_idx], stim_zs[stim_idx], bsln_sub=True, as_rate=True).mean(
                 axis=-1)
             #get all indices where resps is nan, and remove the corresponding indices in the 0th dim of area_activity
             mask = jnp.isnan(resps)
@@ -755,7 +768,7 @@ def plot_opto(opto_xs, opto_zs, opto_ys, newT=900):
                 xs = xs_sub[magidx]
                 zs = zs_sub[magidx]
 
-                area_activity = mf.get_brain_area(name, xs, zs, bsln_sub=True).mean(
+                area_activity = mf.get_brain_area(name, xs, zs, bsln_sub=True, as_rate=True).mean(
                     axis=-1)  # (num_seeds, ...)
 
                 mean_activity, sem_activity = mf.compute_mean_sem(area_activity)  # Mean and SEM over seeds and trials
@@ -805,7 +818,7 @@ def plot_opto(opto_xs, opto_zs, opto_ys, newT=900):
 
 
 def plot_d1d2ratio_SNc_correlogram(d1d2_ratio, all_zs, response_times):
-    snc = mf.get_brain_area('SNc', xs=None, zs=all_zs, bsln_sub=False)
+    snc = mf.get_brain_area('SNc', xs=None, zs=all_zs, bsln_sub=False, as_rate=True)
     snc = jnp.stack(
         [mf.align_to_cue(snc[seed], cs.test_start_t, new_T=500, bsln_sub=True) for seed in range(cs.n_seeds)]
     )
@@ -913,7 +926,7 @@ def plot_d1d2ratio_slope_correlogram(all_xs, response_times):
     ax.set_xlabel('cortical ramp slope')
         # ax.set_title(f'{brain_areas[i]}')
     # ax.set_title('D1:D2 ratio vs. Response time')
-    ax.set_ylabel('dSPN-iSPN activity')
+    ax.set_ylabel('dSPN / iSPN activity')
     plt.tight_layout()
     plt.show()
     save_fig(fig, 'd1d2_ratio_vs_ramp_slopes')
@@ -955,7 +968,7 @@ def plot_ratio_rt_correlogram(d1d2_ratio, response_times):
     # set the y limit from 0 to 5
     # ax.set_ylim(2, 5)
     ax.set_xticks([2, 3, 4, 5])
-    ax.set_ylabel('dSPN-iSPN activity')
+    ax.set_ylabel('dSPN / iSPN activity')
     ax.set_xlabel('response time after cue (s)')
     # ax.set_title('D1:D2 ratio vs. Response time')
     plt.tight_layout()

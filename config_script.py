@@ -65,13 +65,13 @@ default_config = dict(
     # model parameters
     n_bg=20,
     n_nm=5,      # NM (SNc) dimension
-    g_bg=1.4,
-    g_nm=1.4,
+    g_bg=0.5,
+    g_nm=0.5,
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=10,
-    tau_z=100,
+    tau_x=50,
+    tau_z=200,
     noise_std=0.1,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
@@ -109,7 +109,7 @@ n_d2_cells = config['n_bg'] - n_d1_cells
 
 #set up the optimizer
 optimizer = optax.chain(
-  optax.clip(1.0), # gradient clipping
+  optax.clip_by_global_norm(1.0), # gradient clipping
   optax.adamw(learning_rate=1e-3),
 )
 
@@ -129,9 +129,9 @@ n_opto_seeds = 1000
 opto_tstart = 250 #start of cue for opto experiments
 opto_start = opto_tstart + 100#start of opto stimulation
 opto_end = opto_start + 175 #end of opto stimulation
-#Stim a range of 0.1 to 0.5 in steps of 0.1
-d1_stim_strength = jnp.arange(0.0, 0.6, 0.1)
-d2_stim_strength = jnp.arange(0.0, 0.3, 0.05)
+#Stim a range of 0.0 to 1.5 in steps of 0.3
+d1_stim_strength = jnp.arange(0.0, 1.6, 0.3)
+d2_stim_strength = jnp.arange(0.0, 0.8, 0.15)
 d1_suppress_strength = -d1_stim_strength
 d2_suppress_strength = -d2_stim_strength
 
