@@ -4,10 +4,4 @@
 .xml
 .claude
 
-#all svg and png files
-*.svg
-*.png
-
-#ignore the entire plots folder
-plots/
 __pycache__/
