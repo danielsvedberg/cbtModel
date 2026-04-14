@@ -6,7 +6,7 @@ import math
 from jax import grad, vmap, jit
 from jax import lax
 import optax
-import config_script as cs
+import config_script_with_ffin as cs
 
 
 def exc(w):
@@ -18,19 +18,23 @@ def inh(w):
     return -jnp.abs(w)
     #return -jnp.maximum(0, w)
 
-
 def nln(x):
     # return jax.nn.tanh(x)
     #return max(0, jax.nn.tanh(x))
-    #return jnp.maximum(0, jax.nn.tanh(x))
-    return jax.nn.sigmoid(2*(x-0.5))
+    return jnp.maximum(0, jax.nn.tanh(jnp.e*x - 0.1))
     #return jax.nn.relu(x)
     # return jax.nn.softplus(x - 4.0)
 
+def d1_nln(x, a):
+    # Threshold lowered 1.0 → 0.5: with g_bg=1.0 and tau=50 the max reachable
+    # BG state from cortical drive is ~0.6–0.9, well below the old dead-zone of 1.0.
+    # At 0.5, D1 SPNs can engage once the NM pathway has partially built up (~half-tau),
+    # allowing the BG→Thalamus loop to open before the wait period ends.
+    # a shifts the threshold further down as dopamine rises (0.5 no-NM → -0.5 max-NM).
+    return jnp.maximum(0, jax.nn.tanh(jnp.e*(x - 0.5 + a)))
 
-def bg_nln(x):
-    return jax.nn.sigmoid(10*(x-0.5))
-
+def d2_nln(x, a):
+    return jnp.maximum(0, jax.nn.tanh(jnp.e*(x - a)))
 
 def multiregion_nmrnn(
         params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0, rng_key=None
@@ -38,7 +42,7 @@ def multiregion_nmrnn(
     """
     Arguments:
     - params
-    - x_0: initial states (tuple of x_bg0, x_c0, x_t0)
+    - x_0: initial states (tuple of x_bg0, x_c0, x_t0, x_fsi0)
     - z_0: initial state for x_nm
     - inputs: input sequence
     - tau_x, tau_z: decay constants for x and z
@@ -48,7 +52,7 @@ def multiregion_nmrnn(
     - rng_key: JAX random key for reproducibility
     """
     # Unpack initial states
-    x_bg0, x_c0, x_t0 = x_0
+    x_bg0, x_c0, x_t0, x_fsi0 = x_0
     x_nm0 = z_0
 
     # Initialize random keys
@@ -60,6 +64,7 @@ def multiregion_nmrnn(
         x_bg0 += noise_std * jr.normal(init_key, x_bg0.shape)
         x_c0 += noise_std * jr.normal(init_key, x_c0.shape)
         x_t0 += noise_std * jr.normal(init_key, x_t0.shape)
+        x_fsi0 += noise_std * jr.normal(init_key, x_fsi0.shape)
         x_nm0 += noise_std * jr.normal(init_key, x_nm0.shape)
 
     J_bg = params['J_bg']
@@ -73,6 +78,12 @@ def multiregion_nmrnn(
     #J_nmc = params['J_nmc']
     B_nmc = params['B_nmc']
     B_nmbg = params['B_nmbg']
+    J_fsi = params['J_fsi']
+    B_fsi_c = params['B_fsi_c']
+    B_bg_fsi = params['B_bg_fsi']
+    B_fsi_bg = params['B_fsi_bg']
+    B_nm_d1 = params['B_nm_d1']  # (n_d1_cells, n_nm) — per-D1 NM synaptic weights
+    B_nm_d2 = params['B_nm_d2']  # (n_d2_cells, n_nm) — per-D2 NM synaptic weights
     m = params['m']
     c = params['c']
     C = params['C']
@@ -84,6 +95,7 @@ def multiregion_nmrnn(
     tau_c = tau_x
     tau_bg = tau_x
     tau_t = tau_x
+    tau_fsi = tau_x  # FSIs use same fast time constant
     tau_nm = tau_z
 
     num_bg_cells = J_bg.shape[0]
@@ -98,8 +110,18 @@ def multiregion_nmrnn(
         opto_stimulation = jnp.zeros((T, num_bg_cells))
     inputs_and_stim = (inputs, opto_stimulation)
 
+    def bg_nln(x_bg, nm_d1=None, nm_d2=None):
+        """Apply d1_nln to dSPN (first n_d1_cells) and d2_nln to iSPN (remaining).
+        nm_d1: per-D1-neuron neuromodulatory signal (n_d1_cells,) that decreases each D1 neuron's rheobase.
+        nm_d2: per-D2-neuron neuromodulatory signal (n_d2_cells,) that increases each D2 neuron's rheobase."""
+        if nm_d1 is None:
+            nm_d1 = jnp.zeros(n_d1_cells)
+        if nm_d2 is None:
+            nm_d2 = jnp.zeros(n_d2_cells)
+        return jnp.concatenate([d1_nln(x_bg[:n_d1_cells], nm_d1), d2_nln(x_bg[n_d1_cells:], nm_d2)], axis=0)
+
     def _step(x_and_z, u_and_stim, step_rng_key):
-        x_bg, x_c, x_t, x_nm = x_and_z
+        x_bg, x_c, x_t, x_fsi, x_nm = x_and_z
         u, stim = u_and_stim  # see inputs and stim var
 
         # Add noise to the states
@@ -108,16 +130,17 @@ def multiregion_nmrnn(
             x_bg += coef * jr.normal(step_rng_key, x_bg.shape)
             x_c += coef * jr.normal(step_rng_key, x_c.shape)
             x_t += coef * jr.normal(step_rng_key, x_t.shape)
+            x_fsi += coef * jr.normal(step_rng_key, x_fsi.shape)
             coefz = noise_std / math.sqrt(2 * tau_z)
             x_nm += coefz * jr.normal(step_rng_key, x_nm.shape)
 
         # update x_c
-        x_c = (1.0 - (1. / tau_c)) * x_c + (1. / tau_c) * J_c @ nln(x_c)  # recurrent dynamics
+        x_c = (1.0 - (1. / tau_c)) * x_c + (1. / tau_c) * J_c @ x_c  # leak term + recurrent dynamics
         x_c += (1. / tau_c) * B_cu @ u  # external inputs
-        x_c += (1. / tau_c) * exc(B_ct) @ nln(x_t)  # input from thalamus, excitatory
-        #x_c = jnp.maximum(x_c, 0.0)  # clamp to positive
+        x_c += (1. / tau_c) * exc(B_ct) @ x_t  # input from thalamus, excitatory
+        x_c = nln(x_c)  # apply nonlinearity to cortical activity before it goes to BG and NM
 
-        if modulation:
+        '''        if modulation:
             U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))  # direct/indirect
 
             V_bg = jnp.ones((num_bg_cells, 1))
@@ -129,43 +152,66 @@ def multiregion_nmrnn(
         else:
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))
             G_c = jnp.ones((num_bg_cells, num_c_cells))
+'''
 
-        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ bg_nln(
-            x_bg)  # recurrent dynamics, inhibitory
-        x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory
+        # Compute per-D1-neuron neuromodulatory signal from SNc population
+        # Each D1 neuron's rheobase shift is scaled by its own NM synaptic weights (B_nm_d1)
+        # Higher NM activity + stronger synapse -> larger rheobase decrease for that D1 neuron
+        # nm_d1 shape: (n_d1_cells,), one value per D1 neuron
+        nm_d1 = nln(B_nm_d1 @ x_nm)  # per-D1 signal in [0, 1]
+
+        # Compute per-D2-neuron neuromodulatory signal from SNc population
+        # Higher NM activity + stronger synapse -> larger rheobase increase for that D2 neuron
+        # nm_d2 shape: (n_d2_cells,), one value per D2 neuron
+        nm_d2 = nln(B_nm_d2 @ x_nm)  # per-D2 signal in [0, 1]
+
+        # leak term + recurrent dynamics for BG, with inhibitory nonlinearity and neuromodulation
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * inh(J_bg) @ x_bg
+        x_bg += (1. / tau_bg) * exc(B_bgc) @ x_c  # input from cortex, excitatory
+        x_bg += (1. / tau_bg) * inh(B_bg_fsi) @ x_fsi  # feed-forward inhibition from FSIs
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
-        #x_bg = jnp.maximum(x_bg, 0.0)  # clamp to positive
+        # Apply nonlinearity: d1_nln (with per-neuron NM-shifted rheobase) to dSPNs, d2_nln to iSPNs
+        x_bg = jnp.concatenate([d1_nln(x_bg[:n_d1_cells], nm_d1), d2_nln(x_bg[n_d1_cells:], nm_d2)], axis=0)
+
+
+        # update x_fsi (cortex -> FSI -> SPN feed-forward inhibition)
+        x_fsi = (1.0 - (1. / tau_fsi)) * x_fsi + (1. / tau_fsi) * inh(J_fsi) @ x_fsi  # recurrent
+        x_fsi += (1. / tau_fsi) * exc(B_fsi_c) @ nln(x_c)  # excitatory input from cortex
+        x_fsi += (1. / tau_fsi) * inh(B_fsi_bg) @ nln(x_bg)  # inhibitory input from BG (SPNs)
 
         # update x_t
         x_t = (1.0 - (1. / tau_t)) * x_t + (1. / tau_t) * J_t @ nln(x_t)  # recurrent dynamics
         tbg = jnp.concatenate((exc(B_tbg[:, : n_d1_cells]), inh(B_tbg[:, n_d1_cells:])),
                               axis=1)  # two subpopulations have the opposite net effects
-        x_t += (1. / tau_t) * tbg @ bg_nln(x_bg)  # input from BG, inhibitory
+        x_t += (1. / tau_t) * tbg @ bg_nln(x_bg, nm_d1, nm_d2)  # input from BG
         #x_t = jnp.maximum(x_t, 0.0)  # clamp to positive
 
 
         # update x_nm
         x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
         x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
-        x_nm += (1. / tau_nm) * inh(B_nmbg) @ bg_nln(x_bg)  # input from BG, inhibitory
+        x_nm += (1. / tau_nm) * inh(B_nmbg) @ bg_nln(x_bg, nm_d1, nm_d2)  # input from BG, inhibitory
         #x_nm = jnp.maximum(x_nm, 0.0)  # clamp to positive
         # calculate y
 
-        y = C @ nln(x_t) + rb  # output from Thalamus
-        #rb should probably be constrained to always be positive because otherwise you can get weird bistability stuff
-        return (x_bg, x_c, x_t, x_nm), (y, x_bg, x_c, x_t, x_nm)
+        # Sigmoid readout: always non-zero gradient regardless of thalamic activity level.
+        # nln(x_t) = 0 when x_t < 0.037 (dead zone at init); going through C @ x_t + rb
+        # and squashing with sigmoid means the loss can always reach the thalamic state.
+        # rb is initialised to logit(0.25) ≈ -1.1 so the baseline output starts at ~0.25.
+        y = jax.nn.sigmoid(C @ x_t + rb)
+        return (x_bg, x_c, x_t, x_fsi, x_nm), (y, x_bg, x_c, x_t, x_fsi, x_nm)
 
     # Generate random keys for each time step
     step_keys = jr.split(step_key, T)
 
-    _, (y, xbg, xc, xt, xnm) = lax.scan(
+    _, (y, xbg, xc, xt, xfsi, xnm) = lax.scan(
         lambda x_and_z, u_and_stim_rng: _step(x_and_z, u_and_stim_rng[:2], u_and_stim_rng[2]),
-        (x_bg0, x_c0, x_t0, x_nm0),
+        (x_bg0, x_c0, x_t0, x_fsi0, x_nm0),
         (inputs_and_stim[0], inputs_and_stim[1], step_keys),
         #map to u_and_stim_rng[0] and u_and_stim_rng[1] respectively
     )
 
-    return y, (xbg, xc, xt), xnm
+    return y, (xbg, xc, xt, xfsi), xnm
 
 
 # Update batched_nm_rnn to accept random keys and batched opto_stimulation
@@ -190,11 +236,12 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
     # replace all idxs_to_mask that are lower than T_start+10 with T
     idxs_to_mask = jnp.where(idxs_to_mask < T_start_move, T_start_move,
                              idxs_to_mask)  # for all trials with no movement, start the mask at the end
-    value_mask = jnp.where(Tarray > (idxs_to_mask + 50), 0, 1)  # Create the mask here
+    value_mask = jnp.where(Tarray > (idxs_to_mask + 40), 0, 1)  # Create the mask here
     value_mask = jnp.where(Tarray < idxs_to_mask, 0, value_mask)
     batch_targets = value_mask[..., None] #* batch_targets
-    floor=0.25
-    cieling=0.75
+
+    floor = 0.25
+    cieling = 0.75
     batch_targets = floor + batch_targets * (cieling-floor)  # set baseline to 0.25 and movement target to 0.75
 
     return jnp.sum(((ys - batch_targets) ** 2) * batch_mask) / jnp.sum(batch_mask)
@@ -205,39 +252,35 @@ def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters
                wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.1):
     opt_state = optimizer.init(params)
     N_data = inputs.shape[0]
-
-    rng_key = jr.PRNGKey(0)  # Initialize random key
+    rng_key = jr.PRNGKey(0)
 
     @jit
-    def _step(params_and_opt, _):
-        nonlocal rng_key
-        (params, opt_state) = params_and_opt
-
-        # Generate random keys for the batch
+    def _step(carry, _):
+        # rng_key must be part of the carry — mutating a nonlocal inside @jit
+        # causes a JAX tracer leak (the key is a traced value that escapes jit scope).
+        # opt_state is also kept in carry so it isn't silently reset each chunk.
+        params, opt_state, rng_key = carry
         rng_key, subkey = jr.split(rng_key)
         batch_rng_keys = jr.split(subkey, N_data)
 
-        # Compute loss and gradients
         loss_value, grads = jax.value_and_grad(batched_nm_rnn_loss)(
             params, x0, z0, inputs, tau_x, tau_z, targets, loss_masks, batch_rng_keys,
             modulation=modulation, noise_std=noise_std
         )
         updates, opt_state = optimizer.update(grads, opt_state, params)
         params = optax.apply_updates(params, updates)
-        return (params, opt_state), (params, loss_value)
+        return (params, opt_state, rng_key), loss_value
 
     losses = []
     best_loss = float('inf')
     best_params = params
 
     for n in range(num_iters // log_interval):
-        (params, _), (_, loss_values) = lax.scan(
-            _step, (params, opt_state), None, length=log_interval
+        (params, opt_state, rng_key), loss_values = lax.scan(
+            _step, (params, opt_state, rng_key), None, length=log_interval
         )
         losses.append(loss_values)
         print(f'step {(n + 1) * log_interval}, loss: {loss_values[-1]}')
-        #if wandb_log:
-        #    wandb.log({'loss': loss_values[-1]})
         if loss_values[-1] < best_loss:
             best_params = params
             best_loss = loss_values[-1]
@@ -381,11 +424,11 @@ def simulate_opto(params_nm):
     for stim in stim_list:
         # Run batched simulation for all seeds
         batched_inputs = jnp.repeat(all_inputs, cs.n_opto_seeds, axis=0)
-        batched_stim = jnp.repeat(stim[None, :], cs.n_opto_seeds, axis=0)
+        #batched_stim = jnp.repeat(stim[None, :], cs.n_opto_seeds, axis=0)
         ys, xs, zs = batched_nm_rnn(
             params_nm, cs.x0, cs.z0,  # x0 and z0 are generated internally
             batched_inputs, cs.config['tau_x'], cs.config['tau_z'],
-            True, batched_stim, cs.test_noise_std, batched_rng_keys
+            True, stim, cs.test_noise_std, batched_rng_keys
         )
         all_xs_list.append(xs)
         all_ys_list.append(ys)
@@ -422,6 +465,8 @@ def get_brain_area_(brain_area, xs=None, zs=None):
             return x[:, :, :, cs.n_d1_cells:]
         else:
             raise ValueError('Invalid D2 dims')
+    elif brain_area == 'FSI':
+        return xs[3]
     elif brain_area == 'nm':
         return jax.nn.sigmoid(nln(zs) @ exc(cs.params['m'].T) + cs.params['c'])
     else:
@@ -447,7 +492,14 @@ def get_brain_area(brain_area, xs=None, zs=None, bsln_sub=False, as_rate=False):
     out = get_brain_area_(brain_area, xs, zs)
 
     if as_rate:
-        out = nln(out)  # Apply sigmoid: states → rates [0,1]
+        if brain_area == 'D1':
+            # Use a default moderate NM signal (0.5) for offline rate conversion
+            out = d1_nln(out, 0.5)
+        elif brain_area == 'D2':
+            # Use a default moderate NM signal (0.5) for offline rate conversion
+            out = d2_nln(out, 0.5)
+        else:
+            out = nln(out)
 
     if bsln_sub:
         bsln = out[:, :100].mean(axis=1)

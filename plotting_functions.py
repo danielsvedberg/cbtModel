@@ -59,7 +59,7 @@ def plot_output(all_ys):
 def plot_activity_by_area(all_xs, all_zs):
     fig, axs = plt.subplots(5, 2, figsize=(6, 8), sharex=True)
     for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
-        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=True, as_rate=True)
+        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=False, as_rate=True)
         nrn_avg = jnp.mean(area_activity, axis=3)
         # Avg across neurons
         mean_act, sem_act = mf.compute_mean_sem(nrn_avg)
@@ -109,7 +109,7 @@ def plot_cue_algn_activity(all_xs, all_zs, noiseless=False):
 
     fig, axs = plt.subplots(5, 4, figsize=(12, 8), sharex=True, sharey=False)
     for idx, name in enumerate(['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']):
-        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=True, as_rate=True)
+        area_activity = mf.get_brain_area(name, all_xs, all_zs, bsln_sub=False, as_rate=True)
         area_activity = jnp.stack(
             [mf.align_to_cue(area_activity_seed, cs.test_start_t, new_T=new_T) for area_activity_seed in area_activity]
         )
@@ -183,6 +183,7 @@ def plot_cue_algn_activity(all_xs, all_zs, noiseless=False):
         ax2 = ax.twinx()
         nm = name if name != 'D1' and name != 'D2' else ('dSPN' if name == 'D1' else 'iSPN')
         ax2.set_ylabel(f'{nm}', rotation=270, labelpad=10)
+        ax2.set_yticks([])
 
     plt.suptitle('Aligned to cue')
     plt.tight_layout()
@@ -407,7 +408,7 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
             zs_bin = binned_zs[bin_idx]
 
             # Get the brain area activity (aligning to the cue)
-            area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
+            area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin, bsln_sub=False, as_rate=True)  # trials * T * N
 
             # Compute mean and SEM for the current bin
             mean_area_activity = jnp.mean(area_activity, axis=-1)  # trials * T
@@ -446,7 +447,8 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
             ax.set_xlabel('time after cue (s)')
             ax.set_ylabel('activity (AU)')
     axs[0].set_title('Binned by response time')
-    plt.tight_layout()
+    
+    plt.tight_layout() # tight layout would mess up custom cbar ax
     save_fig(fig, 'binned_responses_by_area')
 
     #plot the ratio of d1/d2 activity
@@ -459,8 +461,8 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
         zs_bin = binned_zs[bin_idx]
 
         # Get the brain area activity (aligning to the cue)
-        d1_activity = mf.get_brain_area('D1', xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
-        d2_activity = mf.get_brain_area('D2', xs=xs_bin, zs=zs_bin, bsln_sub=True, as_rate=True)  # trials * T * N
+        d1_activity = mf.get_brain_area('D1', xs=xs_bin, zs=zs_bin, bsln_sub=False, as_rate=True)  # trials * T * N
+        d2_activity = mf.get_brain_area('D2', xs=xs_bin, zs=zs_bin, bsln_sub=False, as_rate=True)  # trials * T * N
 
         #get rid of all negative values in mean_ratio
         mean_d1 = jnp.mean(d1_activity, axis=-1)  # trials * T
@@ -568,7 +570,7 @@ def plot_opto_inh(opto_ys, opto_xs, opto_zs, newT=900):
 
         for stim_idx, label in enumerate(label_list):
             resps = resp_times[stim_idx]
-            area_activity = mf.get_brain_area(name, inh_xs[stim_idx], inh_zs[stim_idx], bsln_sub=True, as_rate=True).mean(
+            area_activity = mf.get_brain_area(name, inh_xs[stim_idx], inh_zs[stim_idx], bsln_sub=False, as_rate=True).mean(
                 axis=-1)
             #get all indices where resps is nan, and remove the corresponding indices in the 0th dim of area_activity
             mask = jnp.isnan(resps)
@@ -651,7 +653,7 @@ def plot_opto_stim(opto_ys, opto_xs, opto_zs, newT=900):
 
         for stim_idx, label in enumerate(label_list):
             resps = resp_times[stim_idx]
-            area_activity = mf.get_brain_area(name, stim_xs[stim_idx], stim_zs[stim_idx], bsln_sub=True, as_rate=True).mean(
+            area_activity = mf.get_brain_area(name, stim_xs[stim_idx], stim_zs[stim_idx], bsln_sub=False, as_rate=True).mean(
                 axis=-1)
             #get all indices where resps is nan, and remove the corresponding indices in the 0th dim of area_activity
             mask = jnp.isnan(resps)
@@ -768,7 +770,7 @@ def plot_opto(opto_xs, opto_zs, opto_ys, newT=900):
                 xs = xs_sub[magidx]
                 zs = zs_sub[magidx]
 
-                area_activity = mf.get_brain_area(name, xs, zs, bsln_sub=True, as_rate=True).mean(
+                area_activity = mf.get_brain_area(name, xs, zs, bsln_sub=False, as_rate=True).mean(
                     axis=-1)  # (num_seeds, ...)
 
                 mean_activity, sem_activity = mf.compute_mean_sem(area_activity)  # Mean and SEM over seeds and trials
@@ -820,7 +822,7 @@ def plot_opto(opto_xs, opto_zs, opto_ys, newT=900):
 def plot_d1d2ratio_SNc_correlogram(d1d2_ratio, all_zs, response_times):
     snc = mf.get_brain_area('SNc', xs=None, zs=all_zs, bsln_sub=False, as_rate=True)
     snc = jnp.stack(
-        [mf.align_to_cue(snc[seed], cs.test_start_t, new_T=500, bsln_sub=True) for seed in range(cs.n_seeds)]
+        [mf.align_to_cue(snc[seed], cs.test_start_t, new_T=500, bsln_sub=False) for seed in range(cs.n_seeds)]
     )
     snc = snc[:, :, 150:250, :].mean(axis=-1).mean(axis=-1)
 
@@ -1040,3 +1042,151 @@ def save_fig(fig, name):
     pngname = cs.png_folder + '/' + name + '.png'
     fig.savefig(svgname)
     fig.savefig(pngname, dpi=900)
+
+def plot_binned_pnr(all_ys, all_xs, all_zs, conditions, xlabel, title, filename, perturbation_boxes=None):
+    """
+    Similar to plot_binned_responses, but bins correspond to experimental conditions directly.
+    all_ys: (n_seeds, n_conditions, T, 1)
+    all_xs: tuple of (n_seeds, n_conditions, T, N) arrays
+    all_zs: (n_seeds, n_conditions, T, N)
+    """
+    n_conditions = len(conditions)
+    cmap = plt.cm.get_cmap('plasma')
+    norm = matplotlib.colors.Normalize(vmin=0, vmax=n_conditions - 1)
+    
+    cue_start_t = 0
+    cue_end_t = (cue_start_t + cs.config['T_cue']) / 100
+    beh_start_t = cs.config['T_wait'] / 100
+    
+    # 1. Plot Output Activity (ys)
+    fig_y, ax_y = plt.subplots(figsize=(2.5, 2))
+    for c_idx in range(n_conditions):
+        ys = all_ys[:, c_idx]
+        mean_ys, sem_ys = mf.compute_mean_sem(ys)
+        x_axis = (jnp.arange(mean_ys.shape[0]) - 300) / 100
+        color = cmap(norm(c_idx))
+        
+        ax_y.plot(x_axis, mean_ys[:, 0], color=color)
+        ax_y.fill_between(x_axis, mean_ys[:, 0] - sem_ys[:, 0], mean_ys[:, 0] + sem_ys[:, 0], color=color, alpha=0.3)
+        
+        if perturbation_boxes is not None and c_idx in perturbation_boxes:
+            p_start, p_end = perturbation_boxes[c_idx]
+            ax_y.axvspan(p_start, p_end, color=color, alpha=0.15)
+        
+    ax_y.axvspan(cue_start_t, cue_end_t, color='red', alpha=0.2)
+    ax_y.axvspan(beh_start_t, x_axis[-1], color='green', alpha=0.2)
+    ax_y.set_xticks([0, 3, 6])
+    ax_y.set_xlabel('time (s)')
+    ax_y.set_ylabel('output activity')
+    ax_y.set_title(title)
+    
+    sm = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    cbar = plt.colorbar(sm, ax=ax_y)
+    cbar.set_label(xlabel, rotation=270, labelpad=15)
+    cbar.set_ticks([0, n_conditions - 1])
+    # Format tick labels to 1 decimal place if floats, else string
+    val_start = f"{conditions[0]:.1f}" if isinstance(conditions[0], (float, jnp.floating)) else str(conditions[0])
+    val_end = f"{conditions[-1]:.1f}" if isinstance(conditions[-1], (float, jnp.floating)) else str(conditions[-1])
+    cbar.set_ticklabels([val_start, val_end])
+    
+    plt.tight_layout()
+    save_fig(fig_y, f'{filename}_outputs')
+    
+    # 2. Plot Brain Area Activities
+    brain_areas = ['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']
+    brain_area_names = ['dSPN', 'iSPN', 'Cortex', 'Thalamus', 'SNc']
+    fig_a, axs_a = plt.subplots(len(brain_areas), 1, figsize=(1.8, 4), sharex=True)
+    
+    for idx, name in enumerate(brain_areas):
+        ax = axs_a[idx]
+        for c_idx in range(n_conditions):
+            xs_c = [x[:, c_idx] for x in all_xs]
+            zs_c = all_zs[:, c_idx]
+            
+            # get_brain_area returns (seeds, T, N)
+            act = mf.get_brain_area(name, xs_c, zs_c, bsln_sub=False, as_rate=True)
+            mean_act_n = jnp.mean(act, axis=-1) # average over neurons -> (seeds, T)
+            mean_act, sem_act = mf.compute_mean_sem(mean_act_n) # (T,)
+            
+            x_axis = (jnp.arange(mean_act.shape[0]) - 300) / 100
+            mask = (x_axis > -0.5) & (x_axis < 5)
+            x_ax_filt = x_axis[mask]
+            color = cmap(norm(c_idx))
+            
+            ax.plot(x_ax_filt, mean_act[mask], color=color)
+            ax.fill_between(x_ax_filt, mean_act[mask]-sem_act[mask], mean_act[mask]+sem_act[mask], color=color, alpha=0.3)
+            
+            if perturbation_boxes is not None and c_idx in perturbation_boxes:
+                p_start, p_end = perturbation_boxes[c_idx]
+                ax.axvspan(p_start, p_end, color=color, alpha=0.15)
+            
+        ax.axvspan(cue_start_t, cue_end_t, color='red', alpha=0.2)
+        ax.axvspan(beh_start_t, x_ax_filt[-1], color='green', alpha=0.2)
+        ax.set_xticks([0, 3])
+        
+        ax2 = ax.twinx()
+        ax2.set_ylabel(brain_area_names[idx], rotation=270, labelpad=10)
+        ax2.set_yticks([])
+        
+        if name == 'SNc':
+            ax.set_xlabel('time after cue (s)')
+            
+    axs_a[0].set_title(title)
+    
+    plt.tight_layout()
+    save_fig(fig_a, f'{filename}_areas')
+    
+    # 3. Plot D1/D2 Ratio Plot
+    fig_ratio, ax_ratio = plt.subplots(figsize=(1.8, 1.5))
+    for c_idx in range(n_conditions):
+        xs_c = [x[:, c_idx] for x in all_xs]
+        zs_c = all_zs[:, c_idx]
+        
+        d1_act = mf.get_brain_area('D1', xs=xs_c, zs=zs_c, bsln_sub=False, as_rate=True)
+        d2_act = mf.get_brain_area('D2', xs=xs_c, zs=zs_c, bsln_sub=False, as_rate=True)
+        
+        mean_d1 = jnp.mean(d1_act, axis=-1)
+        mean_d2 = jnp.mean(d2_act, axis=-1)
+        ratio_act = mean_d1 - mean_d2 # (seeds, T)
+        
+        mean_act = jnp.nanmean(ratio_act, axis=0)
+        mean_act = gaussian_filter1d(mean_act, 10)
+        
+        x_axis = (jnp.arange(mean_act.shape[0]) - 300) / 100
+        mask = (x_axis >= -0.1) & (x_axis < 2)
+        x_ax_filt = x_axis[mask]
+        color = cmap(norm(c_idx))
+        
+        ax_ratio.plot(x_ax_filt, mean_act[mask], color=color)
+        
+        if perturbation_boxes is not None and c_idx in perturbation_boxes:
+            p_start, p_end = perturbation_boxes[c_idx]
+            ax_ratio.axvspan(p_start, p_end, color=color, alpha=0.15)
+            
+    ax_ratio.axvspan(cue_start_t, cue_end_t, color='red', alpha=0.2)
+    ax_ratio.axvspan(0.25, 1.5, color='gray', alpha=0.2)
+    ax_ratio.set_xticks([0, 1, 2])
+    plt.tight_layout()
+    save_fig(fig_ratio, f'{filename}_ratio')
+
+def plot_colorbar(vmin, vmax, cmap_name, label, filename, ticks=None, ticklabels=None):
+    """
+    Creates and saves a standalone colorbar.
+    """
+    fig, ax = plt.subplots(figsize=(1, 3))
+    cmap = plt.cm.get_cmap(cmap_name)
+    norm = matplotlib.colors.Normalize(vmin=vmin, vmax=vmax)
+    sm = matplotlib.cm.ScalarMappable(cmap=cmap, norm=norm)
+    sm.set_array([])
+    
+    cbar = fig.colorbar(sm, cax=ax)
+    cbar.set_label(label, rotation=270, labelpad=15)
+    
+    if ticks is not None:
+        cbar.set_ticks(ticks)
+    if ticklabels is not None:
+        cbar.set_ticklabels(ticklabels)
+        
+    plt.tight_layout()
+    save_fig(fig, filename)

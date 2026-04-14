@@ -1,10 +1,10 @@
-import model_functions as mf
+import model_functions_with_ffin as mf
 import plotting_functions as pf
 import pickle as pkl
 import jax.numpy as jnp
 
 #load params_nm
-with open('params_nm.pkl', 'rb') as f:
+with open('params_nm_ffin.pkl', 'rb') as f:
     params_nm = pkl.load(f)
 
 ####TESTING###############
