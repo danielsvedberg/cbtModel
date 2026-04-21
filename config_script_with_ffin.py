@@ -7,7 +7,7 @@ import os
 
 def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
     # for now assume Th/BG/C are same size, g is the same for all weight matrices
-    skeys = jr.split(key, 24)
+    skeys = jr.split(key, 22)
 
     # bg parameters
     J_bg = (g_bg / math.sqrt(n_bg)) * jr.normal(skeys[0], (n_bg, n_bg))
@@ -34,12 +34,6 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
     B_bg_fsi = (1 / math.sqrt(n_bg)) * jr.normal(skeys[20], (n_bg, n_fsi))   # FSI -> BG (SPNs)
     B_fsi_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[21], (n_fsi, n_bg))   # BG -> FSI
 
-    # NM -> D1 synaptic weights for per-neuron rheobase modulation
-    n_d1 = n_bg // 2
-    n_d2 = n_bg - n_d1
-    B_nm_d1 = (1 / math.sqrt(n_nm)) * jr.normal(skeys[22], (n_d1, n_nm))  # NM -> D1 (per-D1-neuron)
-    B_nm_d2 = (1 / math.sqrt(n_nm)) * jr.normal(skeys[23], (n_d2, n_nm))  # NM -> D2 (per-D2-neuron)
-
     m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
     c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
 
@@ -49,9 +43,7 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
 
     # readout params
     C = (1 / math.sqrt(n_bg)) * jr.normal(skeys[15], (output_dim, n_bg))
-    # Init output bias to logit(0.25) ≈ -1.1 so sigmoid(C@x_t + rb) starts near
-    # the 0.25 baseline target while thalamic activity is near zero at init.
-    rb = jnp.full((output_dim,), -1.1)
+    rb = (1 / math.sqrt(n_bg)) * jr.normal(skeys[16], (output_dim, ))
 
     return {
         'J_bg': J_bg,
@@ -69,8 +61,6 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
         'B_fsi_c': B_fsi_c,
         'B_bg_fsi': B_bg_fsi,
         'B_fsi_bg': B_fsi_bg,
-        'B_nm_d1': B_nm_d1,
-        'B_nm_d2': B_nm_d2,
         'm': m,
         'c': c,
         'C': C,
@@ -88,8 +78,7 @@ default_config = dict(
     n_bg=20,
     n_nm=5,      # NM (SNc) dimension
     n_fsi=5,     # FSI (fast-spiking interneuron) dimension
-    g_bg=1.0,    # increased from 0.5: spectral radius of J_c now ≈1.0, making cortex marginally
-                 # self-sustaining and letting the thalamocortical/BG loop propagate signal
+    g_bg=0.5,
     g_nm=0.5,
     U=1,      # input dim
     O=1,      # output dimension
@@ -109,7 +98,7 @@ default_config = dict(
     T=900,
     # Training
     num_nm_only_iters=0,
-    num_full_train_iters=10000,
+    num_full_train_iters=2000,
     keyind=13,
 )
 
@@ -133,8 +122,8 @@ n_d2_cells = config['n_bg'] - n_d1_cells
 
 #set up the optimizer
 optimizer = optax.chain(
-  optax.clip_by_global_norm(1.0),        # gradient clipping
-  optax.adamw(learning_rate=3e-3),       # bumped from 1e-3; faster with better-conditioned gradients
+  optax.clip_by_global_norm(1.0),
+  optax.adamw(learning_rate=1e-3),
 )
 
 x_bg0 = jnp.ones((config['n_bg'],)) * 0.01

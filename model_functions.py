@@ -130,8 +130,7 @@ def multiregion_nmrnn(
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))
             G_c = jnp.ones((num_bg_cells, num_c_cells))
 
-        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ bg_nln(
-            x_bg)  # recurrent dynamics, inhibitory
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ bg_nln(x_bg)  # recurrent dynamics, inhibitory
         x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
         #x_bg = jnp.maximum(x_bg, 0.0)  # clamp to positive
