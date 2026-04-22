@@ -72,8 +72,8 @@ default_config = dict(
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=100,
-    tau_z=200,
+    tau_x=10,
+    tau_z=20,
     noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
@@ -112,7 +112,7 @@ n_d2_cells = config['n_bg'] - n_d1_cells
 #set up the optimizer
 optimizer = optax.chain(
   optax.clip_by_global_norm(1.0), # gradient clipping
-  optax.adamw(learning_rate=3e-3),
+  optax.adamw(learning_rate=1e-3),
 )
 
 x_bg0 = jnp.ones((config['n_bg'],)) * 0.1
