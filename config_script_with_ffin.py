@@ -7,7 +7,7 @@ import os
 
 def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
     # for now assume Th/BG/C are same size, g is the same for all weight matrices
-    skeys = jr.split(key, 22)
+    skeys = jr.split(key, 21)
 
     # bg parameters
     J_bg = (g_bg / math.sqrt(n_bg)) * jr.normal(skeys[0], (n_bg, n_bg))
@@ -24,26 +24,25 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
 
     # nm parameters
     J_nm = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[7], (n_nm, n_nm))
-    J_nmc = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
-    B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))
-    B_nmbg = (1 / math.sqrt(n_nm)) * jr.normal(skeys[17], (n_nm, n_bg))  # BG -> SNc
+    B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
+    B_nmbg = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))  # BG -> SNc
 
     # fsi parameters
-    J_fsi = (g_bg / math.sqrt(n_fsi)) * jr.normal(skeys[18], (n_fsi, n_fsi))  # FSI recurrent
-    B_fsi_c = (1 / math.sqrt(n_fsi)) * jr.normal(skeys[19], (n_fsi, n_bg))   # Cortex -> FSI
-    B_bg_fsi = (1 / math.sqrt(n_bg)) * jr.normal(skeys[20], (n_bg, n_fsi))   # FSI -> BG (SPNs)
+    J_fsi = (g_bg / math.sqrt(n_fsi)) * jr.normal(skeys[10], (n_fsi, n_fsi))  # FSI recurrent
+    B_fsi_c = (1 / math.sqrt(n_fsi)) * jr.normal(skeys[11], (n_fsi, n_bg))   # Cortex -> FSI
+    B_bg_fsi = (1 / math.sqrt(n_bg)) * jr.normal(skeys[12], (n_bg, n_fsi))   # FSI -> BG (SPNs)
     #B_fsi_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[21], (n_fsi, n_bg))   # BG -> FSI
 
-    m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
-    c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
+    m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[13], (1, n_nm))
+    c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[14])
 
-    U = (1 / math.sqrt(n_bg)) * jr.normal(skeys[12], (1, n_bg))
-    V_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[13], (1, n_bg))
-    V_c = (1 / math.sqrt(n_bg)) * jr.normal(skeys[14], (1, n_bg))
+    U = (1 / math.sqrt(n_bg)) * jr.normal(skeys[15], (1, n_bg))
+    V_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[16], (1, n_bg))
+    V_c = (1 / math.sqrt(n_bg)) * jr.normal(skeys[17], (1, n_bg))
 
     # readout params
-    C = (1 / math.sqrt(n_bg)) * jr.normal(skeys[15], (output_dim, n_bg))
-    rb = (1 / math.sqrt(n_bg)) * jr.normal(skeys[16], (output_dim, ))
+    C = (1 / math.sqrt(n_bg)) * jr.normal(skeys[17], (output_dim, n_bg))
+    rb = (1 / math.sqrt(n_bg)) * jr.normal(skeys[19], (output_dim, ))
 
     return {
         'J_bg': J_bg,
@@ -54,7 +53,6 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
         'J_t': J_t,
         'B_tbg': B_tbg,
         'J_nm': J_nm,
-        'J_nmc': J_nmc,
         'B_nmc': B_nmc,
         'B_nmbg': B_nmbg,
         'J_fsi': J_fsi,

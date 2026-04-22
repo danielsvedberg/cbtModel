@@ -31,7 +31,7 @@ def fsi_nln(x):
 
 
 def multiregion_nmrnn(
-        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0, rng_key=None
+        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0.02, rng_key=None
 ):
     """
     Arguments:
@@ -127,7 +127,7 @@ def multiregion_nmrnn(
             V_bg = jnp.ones((num_bg_cells, 1))
             V_c = jnp.ones((num_c_cells, 1))
 
-            s = exc(m) @ nln(x_nm) + c  # neuromodulatory signal from snc (1D for now)
+            s = jax.nn.sigmoid(exc(m) @ nln(x_nm) + c)  # neuromodulatory signal from snc (1D for now)
             G_bg = jnp.exp(s * U @ V_bg.T)
             G_c = jnp.exp(s * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
         else:
@@ -136,7 +136,7 @@ def multiregion_nmrnn(
 
         # leak term + recurrent dynamics for BG — gain-modulated by NM (matches model_functions.py)
         x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ nln(x_bg)  # recurrent, inhibitory + NM gain
-        x_bg += (1. / tau_bg) * inh(B_bg_fsi) @ fsi_nln(x_fsi)  # feed-forward inhibition from FSIs
+        #x_bg += (1. / tau_bg) * inh(B_bg_fsi) @ nln(x_fsi)  # feed-forward inhibition from FSIs
         x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory + NM gain
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
         # bg_nln is applied wherever BG output is consumed; no inline nln here
@@ -147,7 +147,7 @@ def multiregion_nmrnn(
         x_fsi += (1. / tau_fsi) * exc(B_fsi_c) @ nln(x_c)  # excitatory input from cortex
 
         # update x_t
-        x_t = (1.0 - (1. / tau_t)) * x_t + (1. / tau_t) * J_t @ fsi_nln(x_t)  # recurrent dynamics
+        x_t = (1.0 - (1. / tau_t)) * x_t + (1. / tau_t) * J_t @ nln(x_t)  # recurrent dynamics
         tbg = jnp.concatenate((exc(B_tbg[:, : n_d1_cells]), inh(B_tbg[:, n_d1_cells:])),
                               axis=1)  # two subpopulations have the opposite net effects
         x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG
@@ -209,35 +209,36 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
 
 
 def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters, tau_x, tau_z,
-               wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.1):
+               wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.05):
     opt_state = optimizer.init(params)
     N_data = inputs.shape[0]
     rng_key = jr.PRNGKey(0)
 
     @jit
-    def _step(carry, _):
-        # rng_key must be part of the carry — mutating a nonlocal inside @jit
-        # causes a JAX tracer leak (the key is a traced value that escapes jit scope).
-        # opt_state is also kept in carry so it isn't silently reset each chunk.
-        params, opt_state, rng_key = carry
+    def _step(params_and_opt, _):
+        nonlocal rng_key
+        (params, opt_state) = params_and_opt
+
+        # Generate random keys for the batch
         rng_key, subkey = jr.split(rng_key)
         batch_rng_keys = jr.split(subkey, N_data)
 
+        # Compute loss and gradients
         loss_value, grads = jax.value_and_grad(batched_nm_rnn_loss)(
             params, x0, z0, inputs, tau_x, tau_z, targets, loss_masks, batch_rng_keys,
             modulation=modulation, noise_std=noise_std
         )
         updates, opt_state = optimizer.update(grads, opt_state, params)
         params = optax.apply_updates(params, updates)
-        return (params, opt_state, rng_key), loss_value
+        return (params, opt_state), (params, loss_value)
 
     losses = []
     best_loss = float('inf')
     best_params = params
 
     for n in range(num_iters // log_interval):
-        (params, opt_state, rng_key), loss_values = lax.scan(
-            _step, (params, opt_state, rng_key), None, length=log_interval
+        (params, _), (_, loss_values) = lax.scan(
+            _step, (params, opt_state), None, length=log_interval
         )
         losses.append(loss_values)
         print(f'step {(n + 1) * log_interval}, loss: {loss_values[-1]}')

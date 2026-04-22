@@ -24,9 +24,8 @@ def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
 
     # nm parameters
     J_nm = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[7], (n_nm, n_nm))
-    J_nmc = (g_nm / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
-    B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))
-    B_nmbg = (1 / math.sqrt(n_nm)) * jr.normal(skeys[17], (n_nm, n_bg))  # BG -> SNc
+    B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
+    B_nmbg = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))  # BG -> SNc
 
     m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
     c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
@@ -48,7 +47,6 @@ def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
         'J_t': J_t,
         'B_tbg': B_tbg,
         'J_nm': J_nm,
-        'J_nmc': J_nmc,
         'B_nmc': B_nmc,
         'B_nmbg': B_nmbg,
         'm': m,

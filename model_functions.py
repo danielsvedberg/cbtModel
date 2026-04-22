@@ -34,8 +34,7 @@ def nln(x):
 
 
 def multiregion_nmrnn(
-        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0, rng_key=None
-):
+        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0.02, rng_key=None):
     """
     Arguments:
     - params
@@ -196,7 +195,6 @@ def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters
                wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.05):
     opt_state = optimizer.init(params)
     N_data = inputs.shape[0]
-
     rng_key = jr.PRNGKey(0)  # Initialize random key
 
     @jit
@@ -227,8 +225,6 @@ def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters
         )
         losses.append(loss_values)
         print(f'step {(n + 1) * log_interval}, loss: {loss_values[-1]}')
-        #if wandb_log:
-        #    wandb.log({'loss': loss_values[-1]})
         if loss_values[-1] < best_loss:
             best_params = params
             best_loss = loss_values[-1]
