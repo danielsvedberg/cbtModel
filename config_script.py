@@ -72,8 +72,8 @@ default_config = dict(
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=10,
-    tau_z=20,
+    tau_x=5,
+    tau_z=10,
     noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
