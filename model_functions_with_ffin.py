@@ -21,10 +21,12 @@ def inh(w):
 def nln(x):
     # return jax.nn.tanh(x)
     #return max(0, jax.nn.tanh(x))
-    return jnp.maximum(0, jax.nn.tanh(x))
+    return jax.nn.sigmoid(4 * (x - 0.5))
+    #return jnp.maximum(0, jax.nn.tanh(x))
 
 def fsi_nln(x):
-    return jnp.maximum(0, jax.nn.tanh(x))
+    return jax.nn.sigmoid(4 * (x - 0.5))
+    #return jnp.maximum(0, jax.nn.tanh(x))
 
 
 
@@ -68,20 +70,18 @@ def multiregion_nmrnn(
     J_t = params['J_t']
     B_tbg = params['B_tbg']
     J_nm = params['J_nm']
-    #J_nmc = params['J_nmc']
     B_nmc = params['B_nmc']
     B_nmbg = params['B_nmbg']
+
     J_fsi = params['J_fsi']
     B_fsi_c = params['B_fsi_c']
     B_bg_fsi = params['B_bg_fsi']
-    B_fsi_bg = params['B_fsi_bg']
+    #B_fsi_bg = params['B_fsi_bg']
+
     m = params['m']
     c = params['c']
     C = params['C']
     rb = params['rb']
-    #U = params['U']  #redefined below #TODO figure out if U should be drawn from params
-    #V_bg = params['V_bg']
-    #V_c = params['V_c']
 
     tau_c = tau_x
     tau_bg = tau_x
@@ -91,8 +91,8 @@ def multiregion_nmrnn(
 
     num_bg_cells = J_bg.shape[0]
     num_c_cells = J_c.shape[0]
-    #num_t_cells = J_t.shape[0]
-    #num_nm_cells = J_nm.shape[0]
+    num_t_cells = J_t.shape[0]
+    num_nm_cells = J_nm.shape[0]
     n_d1_cells = num_bg_cells // 2
     n_d2_cells = num_bg_cells - n_d1_cells
     T = inputs.shape[0]
@@ -143,8 +143,7 @@ def multiregion_nmrnn(
 
 
         # update x_fsi (cortex -> FSI -> SPN feed-forward inhibition)
-        x_fsi = (1.0 - (1. / tau_fsi)) * x_fsi # + (1. / tau_fsi) * inh(J_fsi) @ x_fsi  # recurrent
-        x_fsi += (1. / tau_fsi) * inh(B_fsi_bg) @ nln(x_bg)  # inhibitory input from BG (SPNs)
+        x_fsi = (1.0 - (1. / tau_fsi)) * x_fsi + (1. / tau_fsi) * inh(J_fsi) @ x_fsi  # recurrent
         x_fsi += (1. / tau_fsi) * exc(B_fsi_c) @ nln(x_c)  # excitatory input from cortex
 
         # update x_t
@@ -154,7 +153,7 @@ def multiregion_nmrnn(
         x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG
 
         # update x_nm
-        x_nm = (1.0 - (1. / tau_nm)) * x_nm #+ (1. / tau_nm) * J_nm @ nln(x_nm)
+        x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
         x_nm += (1. / tau_nm) * inh(B_nmbg) @ nln(x_bg)  # input from BG, inhibitory
         x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
 

@@ -32,7 +32,7 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
     J_fsi = (g_bg / math.sqrt(n_fsi)) * jr.normal(skeys[18], (n_fsi, n_fsi))  # FSI recurrent
     B_fsi_c = (1 / math.sqrt(n_fsi)) * jr.normal(skeys[19], (n_fsi, n_bg))   # Cortex -> FSI
     B_bg_fsi = (1 / math.sqrt(n_bg)) * jr.normal(skeys[20], (n_bg, n_fsi))   # FSI -> BG (SPNs)
-    B_fsi_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[21], (n_fsi, n_bg))   # BG -> FSI
+    #B_fsi_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[21], (n_fsi, n_bg))   # BG -> FSI
 
     m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
     c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
@@ -60,7 +60,7 @@ def init_params(key, n_bg, n_nm, n_fsi, g_bg, g_nm, input_dim, output_dim):
         'J_fsi': J_fsi,
         'B_fsi_c': B_fsi_c,
         'B_bg_fsi': B_bg_fsi,
-        'B_fsi_bg': B_fsi_bg,
+        #'B_fsi_bg': B_fsi_bg,
         'm': m,
         'c': c,
         'C': C,
@@ -83,8 +83,8 @@ default_config = dict(
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=10,
-    tau_z=100,
+    tau_x=5,
+    tau_z=10,
     noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
@@ -123,15 +123,15 @@ n_d2_cells = config['n_bg'] - n_d1_cells
 #set up the optimizer
 optimizer = optax.chain(
   optax.clip_by_global_norm(1.0),
-  optax.adamw(learning_rate=3e-3),
+  optax.adamw(learning_rate=1e-3),
 )
 
-x_bg0 = jnp.ones((config['n_bg'],)) * 0.01
-x_c0 = jnp.ones((config['n_bg'],)) * 0.01
-x_t0 = jnp.ones((config['n_bg'],)) * 0.01
-x_fsi0 = jnp.ones((config['n_fsi'],)) * 0.01
+x_bg0 = jnp.ones((config['n_bg'],)) * 0.1
+x_c0 = jnp.ones((config['n_bg'],)) * 0.1
+x_t0 = jnp.ones((config['n_bg'],)) * 0.1
+x_fsi0 = jnp.ones((config['n_fsi'],)) * 0.1
 x0 = (x_bg0, x_c0, x_t0, x_fsi0)
-z0 = jnp.ones((config['n_nm'],)) * 0.01
+z0 = jnp.ones((config['n_nm'],)) * 0.1
 
 #declare testing params
 n_seeds = 100

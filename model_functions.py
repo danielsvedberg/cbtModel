@@ -71,16 +71,12 @@ def multiregion_nmrnn(
     J_t = params['J_t']
     B_tbg = params['B_tbg']
     J_nm = params['J_nm']
-    #J_nmc = params['J_nmc']
     B_nmc = params['B_nmc']
     B_nmbg = params['B_nmbg']
     m = params['m']
     c = params['c']
     C = params['C']
     rb = params['rb']
-    #U = params['U']  #redefined below #TODO figure out if U should be drawn from params
-    #V_bg = params['V_bg']
-    #V_c = params['V_c']
 
     tau_c = tau_x
     tau_bg = tau_x
@@ -89,8 +85,6 @@ def multiregion_nmrnn(
 
     num_bg_cells = J_bg.shape[0]
     num_c_cells = J_c.shape[0]
-    #num_t_cells = J_t.shape[0]
-    #num_nm_cells = J_nm.shape[0]
     n_d1_cells = num_bg_cells // 2
     n_d2_cells = num_bg_cells - n_d1_cells
     T = inputs.shape[0]
