@@ -116,9 +116,9 @@ def multiregion_nmrnn(
 
             V_bg = jnp.ones((num_bg_cells, 1))
             V_c = jnp.ones((num_c_cells, 1))
+
             s = jax.nn.sigmoid(exc(m) @ nln(x_nm) + c)  # neuromodulatory signal from snc (1D for now)
-            G_bg = jnp.exp(s * U @ V_bg.T)  # TODO: change to matrix U, V + vector s (for multidimensional NM)
-            #the way this works out, the first half of G_bg is greater than 1, the second half is less than 1
+            G_bg = jnp.exp(s * U @ V_bg.T)
             G_c = jnp.exp(s * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
         else:
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))

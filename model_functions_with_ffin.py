@@ -126,16 +126,16 @@ def multiregion_nmrnn(
 
             V_bg = jnp.ones((num_bg_cells, 1))
             V_c = jnp.ones((num_c_cells, 1))
+
             s = exc(m) @ nln(x_nm) + c  # neuromodulatory signal from snc (1D for now)
-            G_bg = jnp.exp(s * U @ V_bg.T)  # TODO: alter this for fsi
-            # the way this works out, the first half of G_bg is greater than 1, the second half is less than 1
+            G_bg = jnp.exp(s * U @ V_bg.T)
             G_c = jnp.exp(s * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
         else:
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))
             G_c = jnp.ones((num_bg_cells, num_c_cells))
 
         # leak term + recurrent dynamics for BG — gain-modulated by NM (matches model_functions.py)
-        x_bg = (1.0 - (1. / tau_bg)) * x_bg #+ (1. / tau_bg) * (G_bg * inh(J_bg)) @ nln(x_bg)  # recurrent, inhibitory + NM gain
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ nln(x_bg)  # recurrent, inhibitory + NM gain
         x_bg += (1. / tau_bg) * inh(B_bg_fsi) @ fsi_nln(x_fsi)  # feed-forward inhibition from FSIs
         x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory + NM gain
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
