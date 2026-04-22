@@ -21,7 +21,7 @@ def inh(w):
 def nln(x):
     # return jax.nn.tanh(x)
     #return max(0, jax.nn.tanh(x))
-    return jnp.maximum(0, jax.nn.tanh(x - 0.1))
+    return jnp.maximum(0, jax.nn.tanh(x))
 
 def fsi_nln(x):
     return jnp.maximum(0, jax.nn.tanh(x))

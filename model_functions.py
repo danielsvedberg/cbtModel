@@ -21,15 +21,16 @@ def inh(w):
 
 def nln(x):
     # return jax.nn.tanh(x)
-    #return max(0, jax.nn.tanh(x))
     #return jnp.maximum(0, jax.nn.tanh(x))
-    return jax.nn.sigmoid(2*(x-0.5))
+    return jax.nn.sigmoid(4*(x-0.5))
     #return jax.nn.relu(x)
     # return jax.nn.softplus(x - 4.0)
 
 
-def bg_nln(x):
-    return jax.nn.sigmoid(10*(x-0.5))
+#def bg_nln(x):
+#    #return jax.nn.sigmoid(10*(x-0.5))
+#    return jnp.maximum(0, jax.nn.tanh(x))
+
 
 
 def multiregion_nmrnn(
@@ -115,7 +116,6 @@ def multiregion_nmrnn(
         x_c = (1.0 - (1. / tau_c)) * x_c + (1. / tau_c) * J_c @ nln(x_c)  # recurrent dynamics
         x_c += (1. / tau_c) * B_cu @ u  # external inputs
         x_c += (1. / tau_c) * exc(B_ct) @ nln(x_t)  # input from thalamus, excitatory
-        #x_c = jnp.maximum(x_c, 0.0)  # clamp to positive
 
         if modulation:
             U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))  # direct/indirect
@@ -130,27 +130,25 @@ def multiregion_nmrnn(
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))
             G_c = jnp.ones((num_bg_cells, num_c_cells))
 
-        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ bg_nln(x_bg)  # recurrent dynamics, inhibitory
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ nln(x_bg)  # recurrent dynamics, inhibitory
         x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
-        #x_bg = jnp.maximum(x_bg, 0.0)  # clamp to positive
+
 
         # update x_t
         x_t = (1.0 - (1. / tau_t)) * x_t + (1. / tau_t) * J_t @ nln(x_t)  # recurrent dynamics
         tbg = jnp.concatenate((exc(B_tbg[:, : n_d1_cells]), inh(B_tbg[:, n_d1_cells:])),
                               axis=1)  # two subpopulations have the opposite net effects
-        x_t += (1. / tau_t) * tbg @ bg_nln(x_bg)  # input from BG, inhibitory
-        #x_t = jnp.maximum(x_t, 0.0)  # clamp to positive
+        x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG, inhibitory
 
 
         # update x_nm
         x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
         x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
-        x_nm += (1. / tau_nm) * inh(B_nmbg) @ bg_nln(x_bg)  # input from BG, inhibitory
-        #x_nm = jnp.maximum(x_nm, 0.0)  # clamp to positive
+        x_nm += (1. / tau_nm) * inh(B_nmbg) @ nln(x_bg)  # input from BG, inhibitory
         # calculate y
 
-        y = C @ nln(x_t) + rb  # output from Thalamus
+        y = exc(C) @ nln(x_t) + rb  # output from Thalamus
         #rb should probably be constrained to always be positive because otherwise you can get weird bistability stuff
         return (x_bg, x_c, x_t, x_nm), (y, x_bg, x_c, x_t, x_nm)
 
@@ -201,7 +199,7 @@ def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_target
 
 
 def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters, tau_x, tau_z,
-               wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.1):
+               wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.05):
     opt_state = optimizer.init(params)
     N_data = inputs.shape[0]
 

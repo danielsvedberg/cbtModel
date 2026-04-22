@@ -72,9 +72,9 @@ default_config = dict(
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=50,
-    tau_z=100,
-    noise_std=0.1,  # Standard deviation of noise
+    tau_x=100,
+    tau_z=200,
+    noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
     # Data Generation
@@ -87,7 +87,7 @@ default_config = dict(
     T=900,
     # Training
     num_nm_only_iters=0,
-    num_full_train_iters=100000,
+    num_full_train_iters=2000,
     keyind=13,
 )
 
@@ -112,18 +112,18 @@ n_d2_cells = config['n_bg'] - n_d1_cells
 #set up the optimizer
 optimizer = optax.chain(
   optax.clip_by_global_norm(1.0), # gradient clipping
-  optax.adamw(learning_rate=1e-3),
+  optax.adamw(learning_rate=3e-3),
 )
 
-x_bg0 = jnp.ones((config['n_bg'],)) * 0.01
-x_c0 = jnp.ones((config['n_bg'],)) * 0.01
-x_t0 = jnp.ones((config['n_bg'],)) * 0.01
+x_bg0 = jnp.ones((config['n_bg'],)) * 0.1
+x_c0 = jnp.ones((config['n_bg'],)) * 0.1
+x_t0 = jnp.ones((config['n_bg'],)) * 0.1
 x0 = (x_bg0, x_c0, x_t0)
-z0 = jnp.ones((config['n_nm'],)) * 0.01
+z0 = jnp.ones((config['n_nm'],)) * 0.1
 
 #declare testing params
 n_seeds = 100
-test_noise_std = 0.2 # Specify noise standard deviation for testing
+test_noise_std = 0.05 # Specify noise standard deviation for testing
 #test_start_t = jnp.arange(300,405,5)
 test_start_t = jnp.arange(270, 330, 10)
 #opto params
