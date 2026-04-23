@@ -21,10 +21,19 @@ def inh(w):
 
 def nln(x):
     # return jax.nn.tanh(x)
-    #return jnp.maximum(0, jax.nn.tanh(x))
-    return jax.nn.sigmoid(4*(x-0.5))
+    return jnp.maximum(0, jax.nn.tanh(x+0.1))
+    #return jax.nn.sigmoid(4*(x-0.5))
     #return jax.nn.relu(x)
     # return jax.nn.softplus(x - 4.0)
+
+
+def _asymmetric_trace_update(state, target, tau_rise, tau_fall):
+    # Fast/slow first-order trace: rise uses tau_rise, decay uses tau_fall.
+    tau_rise = jnp.asarray(tau_rise)
+    tau_fall = jnp.asarray(tau_fall)
+    tau = jnp.where(target > state, tau_rise, tau_fall)
+    tau = jnp.maximum(tau, 1e-3)
+    return state + (target - state) / tau
 
 
 #def bg_nln(x):
@@ -34,7 +43,7 @@ def nln(x):
 
 
 def multiregion_nmrnn(
-        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0.02, rng_key=None):
+        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0.05, rng_key=None):
     """
     Arguments:
     - params
@@ -82,6 +91,14 @@ def multiregion_nmrnn(
     tau_t = tau_x
     tau_nm = tau_z
 
+    # Optional DA-trace hyperparameters (safe defaults for backward compatibility).
+    tau_d1_rise = params.get('tau_d1_rise', 10.0)
+    tau_d1_fall = params.get('tau_d1_fall', 30000.0)
+    tau_d2_rise = params.get('tau_d2_rise', 20.0)
+    tau_d2_fall = params.get('tau_d2_fall', 30000.0)
+    gain_e_d1 = params.get('gain_e_d1', 1.0)
+    gain_e_d2 = params.get('gain_e_d2', 1.0)
+
     num_bg_cells = J_bg.shape[0]
     num_c_cells = J_c.shape[0]
     n_d1_cells = num_bg_cells // 2
@@ -92,8 +109,13 @@ def multiregion_nmrnn(
         opto_stimulation = jnp.zeros((T, num_bg_cells))
     inputs_and_stim = (inputs, opto_stimulation)
 
+    # Initialize DA-derived excitability traces from initial NM state.
+    da0 = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm0) + c))[0]
+    e_d10 = da0
+    e_d20 = 1.0 - da0
+
     def _step(x_and_z, u_and_stim, step_rng_key):
-        x_bg, x_c, x_t, x_nm = x_and_z
+        x_bg, x_c, x_t, x_nm, e_d1, e_d2 = x_and_z
         u, stim = u_and_stim  # see inputs and stim var
 
         # Add noise to the states
@@ -116,16 +138,38 @@ def multiregion_nmrnn(
             V_bg = jnp.ones((num_bg_cells, 1))
             V_c = jnp.ones((num_c_cells, 1))
 
-            s = jax.nn.sigmoid(exc(m) @ nln(x_nm) + c)  # neuromodulatory signal from snc (1D for now)
-            G_bg = jnp.exp(s * U @ V_bg.T)
-            G_c = jnp.exp(s * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
+            s = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm) + c))[0]  # scalar DA-like NM signal
+
+            # dSPN: fast up with DA rise, slow down with DA fall.
+            # iSPN: fast up when DA falls (target = 1-DA), slow down when DA rises.
+            e_d1 = _asymmetric_trace_update(e_d1, s, tau_d1_rise, tau_d1_fall)
+            e_d2 = _asymmetric_trace_update(e_d2, 1.0 - s, tau_d2_rise, tau_d2_fall)
+            e_d1 = jnp.clip(e_d1, 0.0, 1.0)
+            e_d2 = jnp.clip(e_d2, 0.0, 1.0)
+
+            s_for_gain = s
+            G_bg = jnp.exp(s_for_gain * U @ V_bg.T)
+            G_c = jnp.exp(s_for_gain * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
+
+            pop_gain = jnp.concatenate((
+                jnp.ones((n_d1_cells,)) * (1.0 + gain_e_d1 * e_d1),
+                jnp.ones((n_d2_cells,)) * (1.0 + gain_e_d2 * e_d2),
+            ))
         else:
             G_bg = jnp.ones((num_bg_cells, num_bg_cells))
             G_c = jnp.ones((num_bg_cells, num_c_cells))
+            pop_gain = jnp.ones((num_bg_cells,))
 
-        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * (G_bg * inh(J_bg)) @ nln(x_bg)  # recurrent dynamics, inhibitory
-        x_bg += (1. / tau_bg) * (G_c * exc(B_bgc)) @ nln(x_c)  # input from cortex, excitatory
+        bg_rec = (G_bg * inh(J_bg)) @ nln(x_bg)
+        bg_ctx = (G_c * exc(B_bgc)) @ nln(x_c)
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * pop_gain * (bg_rec + bg_ctx)
         x_bg += (1. / tau_bg) * stim  # simulate stimulation
+
+        # update x_nm
+        x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
+        x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
+        x_nm += (1. / tau_nm) * inh(B_nmbg) @ nln(x_bg)  # input from BG, inhibitory
+        # calculate y
 
 
         # update x_t
@@ -135,22 +179,18 @@ def multiregion_nmrnn(
         x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG, inhibitory
 
 
-        # update x_nm
-        x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
-        x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
-        x_nm += (1. / tau_nm) * inh(B_nmbg) @ nln(x_bg)  # input from BG, inhibitory
-        # calculate y
+
 
         y = exc(C) @ nln(x_t) + rb  # output from Thalamus
         #rb should probably be constrained to always be positive because otherwise you can get weird bistability stuff
-        return (x_bg, x_c, x_t, x_nm), (y, x_bg, x_c, x_t, x_nm)
+        return (x_bg, x_c, x_t, x_nm, e_d1, e_d2), (y, x_bg, x_c, x_t, x_nm)
 
     # Generate random keys for each time step
     step_keys = jr.split(step_key, T)
 
     _, (y, xbg, xc, xt, xnm) = lax.scan(
         lambda x_and_z, u_and_stim_rng: _step(x_and_z, u_and_stim_rng[:2], u_and_stim_rng[2]),
-        (x_bg0, x_c0, x_t0, x_nm0),
+        (x_bg0, x_c0, x_t0, x_nm0, e_d10, e_d20),
         (inputs_and_stim[0], inputs_and_stim[1], step_keys),
         #map to u_and_stim_rng[0] and u_and_stim_rng[1] respectively
     )

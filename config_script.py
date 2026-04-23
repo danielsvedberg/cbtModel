@@ -70,8 +70,8 @@ default_config = dict(
     U=1,      # input dim
     O=1,      # output dimension
     # Model Hyperparameters
-    tau_x=5,
-    tau_z=10,
+    tau_x=15,
+    tau_z=150, #roughly time constant needed for DA levels to fall to baseline according to laheri and bevan
     noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
