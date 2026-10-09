@@ -1,0 +1,620 @@
+import jax
+import jax.numpy as jnp
+import jax.random as jr
+import math
+
+from jax import grad, vmap, jit
+from jax import lax
+import optax
+import config_script as cs
+
+
+def exc(w):
+    #return jnp.maximum(0, w)
+    return jnp.abs(w)
+
+
+def inh(w):
+    return -jnp.abs(w)
+    #return -jnp.maximum(0, w)
+
+
+def nln(x):
+    # return jax.nn.tanh(x)
+    return jnp.maximum(0, jax.nn.tanh(x))
+    #return jax.nn.sigmoid(4*(x-0.5))
+    #return jax.nn.relu(x)
+    # return jax.nn.softplus(x - 4.0)
+
+
+def _asymmetric_trace_update(state, target, tau_rise, tau_fall):
+    # Fast/slow first-order trace: rise uses tau_rise, decay uses tau_fall.
+    tau_rise = jnp.asarray(tau_rise)
+    tau_fall = jnp.asarray(tau_fall)
+    tau = jnp.where(target > state, tau_rise, tau_fall)
+    tau = jnp.maximum(tau, 1e-3)
+    return state + (target - state) / tau
+
+
+#def bg_nln(x):
+#    #return jax.nn.sigmoid(10*(x-0.5))
+#    return jnp.maximum(0, jax.nn.tanh(x))
+
+
+
+def multiregion_nmrnn(
+        params, x_0, z_0, inputs, tau_x, tau_z, modulation=True, opto_stimulation=None, noise_std=0.05, rng_key=None):
+    """
+    Arguments:
+    - params
+    - x_0: initial states (tuple of x_bg0, x_c0, x_t0)
+    - z_0: initial state for x_nm
+    - inputs: input sequence
+    - tau_x, tau_z: decay constants for x and z
+    - modulation: whether to apply neuromodulation
+    - opto_stimulation: optional external stimulation
+    - noise_std: standard deviation of the noise to add
+    - rng_key: JAX random key for reproducibility
+    """
+    # Unpack initial states
+    x_bg0, x_c0, x_t0 = x_0
+    x_nm0 = z_0
+
+    # Initialize random keys
+    rng_key = jr.PRNGKey(0) if rng_key is None else rng_key
+    rng_key, init_key, step_key = jr.split(rng_key, 3)
+
+    # Add noise to initial states
+    if noise_std > 0:
+        x_bg0 += noise_std * jr.normal(init_key, x_bg0.shape)
+        x_c0 += noise_std * jr.normal(init_key, x_c0.shape)
+        x_t0 += noise_std * jr.normal(init_key, x_t0.shape)
+        x_nm0 += noise_std * jr.normal(init_key, x_nm0.shape)
+
+    J_bg = params['J_bg']
+    B_bgc = params['B_bgc']
+    J_c = params['J_c']
+    B_cu = params['B_cu']  #cue, should always be positive
+    B_ct = params['B_ct']
+    J_t = params['J_t']
+    B_tbg = params['B_tbg']
+    J_nm = params['J_nm']
+    B_nmc = params['B_nmc']
+    B_nmbg = params['B_nmbg']
+    m = params['m']
+    c = params['c']
+    C = params['C']
+    rb = params['rb']
+
+    tau_c = tau_x
+    tau_bg = tau_x
+    tau_t = tau_x
+    tau_nm = tau_z
+
+    # Optional DA-trace hyperparameters (safe defaults for backward compatibility).
+    tau_d1_rise = params.get('tau_d1_rise', 10.0)
+    tau_d1_fall = params.get('tau_d1_fall', 15000.0)
+    tau_d2_rise = params.get('tau_d2_rise', 20.0)
+    tau_d2_fall = params.get('tau_d2_fall', 15000.0)
+    gain_e_d1 = params.get('gain_e_d1', 1.0)
+    gain_e_d2 = params.get('gain_e_d2', 1.0)
+
+    num_bg_cells = J_bg.shape[0]
+    num_c_cells = J_c.shape[0]
+    n_d1_cells = num_bg_cells // 2
+    n_d2_cells = num_bg_cells - n_d1_cells
+    T = inputs.shape[0]
+
+    if opto_stimulation is None:
+        opto_stimulation = jnp.zeros((T, num_bg_cells))
+    inputs_and_stim = (inputs, opto_stimulation)
+
+    # Initialize DA-derived excitability traces from initial NM state.
+    da0 = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm0) + c))[0]
+    e_d10 = da0
+    e_d20 = 1.0 - da0
+
+    def _step(x_and_z, u_and_stim, step_rng_key):
+        x_bg, x_c, x_t, x_nm, e_d1, e_d2 = x_and_z
+        u, stim = u_and_stim  # see inputs and stim var
+
+        # Add noise to the states
+        if noise_std > 0:
+            coef = noise_std / math.sqrt(2 * tau_x)
+            x_bg += coef * jr.normal(step_rng_key, x_bg.shape)
+            x_c += coef * jr.normal(step_rng_key, x_c.shape)
+            x_t += coef * jr.normal(step_rng_key, x_t.shape)
+            coefz = noise_std / math.sqrt(2 * tau_z)
+            x_nm += coefz * jr.normal(step_rng_key, x_nm.shape)
+
+        # update x_c
+        x_c = (1.0 - (1. / tau_c)) * x_c + (1. / tau_c) * J_c @ nln(x_c)  # recurrent dynamics
+        x_c += (1. / tau_c) * B_cu @ u  # external inputs
+        x_c += (1. / tau_c) * exc(B_ct) @ nln(x_t)  # input from thalamus, excitatory
+
+        if modulation:
+            U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))  # direct/indirect
+
+            V_bg = jnp.ones((num_bg_cells, 1))
+            V_c = jnp.ones((num_c_cells, 1))
+
+            s = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm) + c))[0]  # scalar DA-like NM signal
+
+            # dSPN: fast up with DA rise, slow down with DA fall.
+            # iSPN: fast up when DA falls (target = 1-DA), slow down when DA rises.
+            e_d1 = _asymmetric_trace_update(e_d1, s, tau_d1_rise, tau_d1_fall)
+            e_d2 = _asymmetric_trace_update(e_d2, 1.0 - s, tau_d2_rise, tau_d2_fall)
+            e_d1 = jnp.clip(e_d1, 0.0, 1.0)
+            e_d2 = jnp.clip(e_d2, 0.0, 1.0)
+
+            s_for_gain = s
+            G_bg = jnp.exp(s_for_gain * U @ V_bg.T)
+            G_c = jnp.exp(s_for_gain * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
+
+            pop_gain = jnp.concatenate((
+                jnp.ones((n_d1_cells,)) * (1.0 + gain_e_d1 * e_d1),
+                jnp.ones((n_d2_cells,)) * (1.0 + gain_e_d2 * e_d2),
+            ))
+        else:
+            G_bg = jnp.ones((num_bg_cells, num_bg_cells))
+            G_c = jnp.ones((num_bg_cells, num_c_cells))
+            pop_gain = jnp.ones((num_bg_cells,))
+
+        bg_rec = (G_bg * inh(J_bg)) @ nln(x_bg)
+        bg_ctx = (G_c * exc(B_bgc)) @ nln(x_c)
+        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * pop_gain * (bg_rec + bg_ctx)
+        x_bg += (1. / tau_bg) * stim  # simulate stimulation
+
+        # update x_nm
+        x_nm = (1.0 - (1. / tau_nm)) * x_nm + (1. / tau_nm) * J_nm @ nln(x_nm)
+        x_nm += (1. / tau_nm) * exc(B_nmc) @ nln(x_c)  # input from cortex, excitatory
+        x_nm += (1. / tau_nm) * inh(B_nmbg) @ nln(x_bg)  # input from BG, inhibitory
+        # calculate y
+
+
+        # update x_t
+        x_t = (1.0 - (1. / tau_t)) * x_t + (1. / tau_t) * J_t @ nln(x_t)  # recurrent dynamics
+        tbg = jnp.concatenate((exc(B_tbg[:, : n_d1_cells]), inh(B_tbg[:, n_d1_cells:])),
+                              axis=1)  # two subpopulations have the opposite net effects
+        x_t += (1. / tau_t) * tbg @ nln(x_bg)  # input from BG, inhibitory
+
+
+
+
+        y = exc(C) @ nln(x_t) + rb  # output from Thalamus
+        #rb should probably be constrained to always be positive because otherwise you can get weird bistability stuff
+        return (x_bg, x_c, x_t, x_nm, e_d1, e_d2), (y, x_bg, x_c, x_t, x_nm)
+
+    # Generate random keys for each time step
+    step_keys = jr.split(step_key, T)
+
+    _, (y, xbg, xc, xt, xnm) = lax.scan(
+        lambda x_and_z, u_and_stim_rng: _step(x_and_z, u_and_stim_rng[:2], u_and_stim_rng[2]),
+        (x_bg0, x_c0, x_t0, x_nm0, e_d10, e_d20),
+        (inputs_and_stim[0], inputs_and_stim[1], step_keys),
+        #map to u_and_stim_rng[0] and u_and_stim_rng[1] respectively
+    )
+
+    return y, (xbg, xc, xt), xnm
+
+
+# Update batched_nm_rnn to accept random keys and batched opto_stimulation
+batched_nm_rnn = vmap(
+    multiregion_nmrnn,
+    in_axes=(None, None, None, 0, None, None, None, 0, None, 0)  # opto_stim is index 7
+)
+
+
+def batched_nm_rnn_loss(params, x0, z0, batch_inputs, tau_x, tau_z, batch_targets, batch_mask, rng_keys,
+                        modulation=True, noise_std=0):
+    ys, _, _ = batched_nm_rnn(params, x0, z0, batch_inputs, tau_x, tau_z, modulation, None, noise_std, rng_keys)
+    # Create the final mask based on first over-threshold index
+    T_start_move = jnp.argmax(batch_targets, axis=1)
+    T = batch_inputs.shape[1]
+    Tarray = jnp.arange(T)
+    # Assuming ys has shape (batch_size, time_steps, output_dim)
+    # Assuming ys has shape (batch_size, time_steps, output_dim)
+    over_thresh = ys >= 0.5
+    first_over_threshold_indices = jnp.argmax(over_thresh, axis=1)
+    idxs_to_mask = first_over_threshold_indices  # Indices to be masked
+    # replace all idxs_to_mask that are lower than T_start+10 with T
+    idxs_to_mask = jnp.where(idxs_to_mask < T_start_move, T_start_move,
+                             idxs_to_mask)  # for all trials with no movement, start the mask at the end
+    value_mask = jnp.where(Tarray > (idxs_to_mask + 50), 0, 1)  # Create the mask here
+    value_mask = jnp.where(Tarray < idxs_to_mask, 0, value_mask)
+    batch_targets = value_mask[..., None] #* batch_targets
+    floor=0.25
+    cieling=0.75
+    batch_targets = floor + batch_targets * (cieling-floor)  # set baseline to 0.25 and movement target to 0.75
+
+    return jnp.sum(((ys - batch_targets) ** 2) * batch_mask) / jnp.sum(batch_mask)
+
+
+
+def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters, tau_x, tau_z,
+               wandb_log=False, orth_u=True, modulation=True, log_interval=200, noise_std=0.05):
+    opt_state = optimizer.init(params)
+    N_data = inputs.shape[0]
+    rng_key = jr.PRNGKey(0)  # Initialize random key
+
+    @jit
+    def _step(params_and_opt, _):
+        nonlocal rng_key
+        (params, opt_state) = params_and_opt
+
+        # Generate random keys for the batch
+        rng_key, subkey = jr.split(rng_key)
+        batch_rng_keys = jr.split(subkey, N_data)
+
+        # Compute loss and gradients
+        loss_value, grads = jax.value_and_grad(batched_nm_rnn_loss)(
+            params, x0, z0, inputs, tau_x, tau_z, targets, loss_masks, batch_rng_keys,
+            modulation=modulation, noise_std=noise_std
+        )
+        updates, opt_state = optimizer.update(grads, opt_state, params)
+        params = optax.apply_updates(params, updates)
+        return (params, opt_state), (params, loss_value)
+
+    losses = []
+    best_loss = float('inf')
+    best_params = params
+
+    for n in range(num_iters // log_interval):
+        (params, _), (_, loss_values) = lax.scan(
+            _step, (params, opt_state), None, length=log_interval
+        )
+        losses.append(loss_values)
+        print(f'step {(n + 1) * log_interval}, loss: {loss_values[-1]}')
+        if loss_values[-1] < best_loss:
+            best_params = params
+            best_loss = loss_values[-1]
+
+    return best_params, losses
+
+
+def self_timed_movement_task(T_start, T_cue, T_wait, T_movement, T, null_trial=False):
+    """
+    Simulate all possible input/output pairs for the self-timed movement task.
+
+    Arguments:
+    T_start: a list of possible time before the cue
+    T_cue: duration of the cue
+    T_wait: duration of the wait
+    T_movement: duration of the movement
+    T: total trial time, should not be at least T_start + T_cue + T_wait + T_movement
+
+    Returns:
+    inputs: (num_starts, T, 1), binary time series representing the cue
+    outputs: (num_starts, T, 1), representing the desired movement
+    mask: (num_starts, T, 1), the loss mask
+    """
+    num_starts = T_start.shape[0]
+
+    def _single(interval_ind):
+        t_start = T_start[interval_ind]
+        t_cue_end = t_start + T_cue
+        t_wait_end = t_start + T_wait
+        t_movement_end = t_wait_end + T_movement
+
+        # Initialize arrays for inputs, outputs, and masks
+        inputs = jnp.zeros((T, 1))
+        outputs = jnp.zeros(
+            (T, 1))  #outputs is a mask length of trial, with reward for Y=1 between T_movement and T_wait_end)
+        mask = jnp.ones((T, 1))
+
+        # Dynamically update the slices
+        inputs = jax.lax.dynamic_update_slice(inputs, jnp.ones((T_cue, 1)), (t_start, 0))
+        outputs = jax.lax.dynamic_update_slice(outputs, jnp.ones((T_movement, 1)), (t_wait_end, 0))
+
+        return inputs, outputs, mask
+
+    inputs, outputs, masks = vmap(_single)(jnp.arange(num_starts))
+
+    return inputs, outputs, masks
+
+
+def get_response_times(all_ys, exclude_nan=True):
+    response_times = jnp.full((cs.n_seeds, all_ys.shape[1]), jnp.nan)  # Default to NaN if no response is detected
+
+    for seed_idx in range(cs.n_seeds):
+        for condition_idx in range(all_ys.shape[1]):
+            cue_end = cs.test_start_t[condition_idx] + cs.config['T_cue']
+            post_cue_activity = all_ys[seed_idx, condition_idx, cue_end:]  # Activity after the cue
+            response_idx = jnp.argmax(post_cue_activity[:, 0] > 0.5)  # Find first timestep where y > 0.5
+            if post_cue_activity[response_idx, 0] > 0.5:
+                response_times = response_times.at[seed_idx, condition_idx].set((response_idx) * 0.01)
+
+    # Flatten the response_times array, excluding NaN values
+    if exclude_nan:
+        valid_response_times = response_times[~jnp.isnan(response_times)].flatten()
+    else:
+        #replace NaN with T
+        valid_response_times = response_times  #.flatten()
+    return valid_response_times
+
+
+def get_response_times_opto(opto_ys, exclude_nan=True, flatten=True):
+    response_times = jnp.full((cs.n_opto_seeds, 1), jnp.nan)  # Default to NaN if no response is detected
+    for seed_idx in range(cs.n_opto_seeds):
+        post_cue_activity = opto_ys[seed_idx, cs.opto_tstart:]  # Activity after the cue
+        response_idx = jnp.argmax(post_cue_activity[:, 0] > 0.5)  # Find first timestep where y > 0.5
+        if post_cue_activity[response_idx, 0] > 0.5:
+            response_times = response_times.at[seed_idx].set((response_idx) * 0.01)
+
+    # Flatten the response_times array, excluding NaN values
+    if exclude_nan:
+        response_times = response_times[~jnp.isnan(response_times)]
+
+    if flatten:
+        response_times = response_times.flatten()
+
+    return response_times
+
+
+def test_model(params_nm, noise=True):
+    all_inputs, all_outputs, all_masks = self_timed_movement_task(
+        cs.test_start_t, cs.config['T_cue'], cs.config['T_wait'], cs.config['T_movement'], cs.config['T']
+    )
+
+    # Collect activity for each seed
+    all_ys = []
+    all_xs = []
+    all_zs = []
+
+    if noise:
+        n = cs.test_noise_std
+    else:
+        n = 0
+
+    for seed in range(cs.n_seeds):
+        rng_key = jr.PRNGKey(seed)
+        batched_rng_key = jr.split(rng_key, all_inputs.shape[0])
+        ys, xs, zs = batched_nm_rnn(
+            params_nm, cs.x0, cs.z0, all_inputs, cs.config['tau_x'], cs.config['tau_z'], True, None, n, batched_rng_key
+        )
+        all_ys.append(ys)
+        all_xs.append(xs)
+        all_zs.append(zs)
+
+    # Convert collected data to arrays
+    all_ys = jnp.stack(all_ys)  # shape: (cs.n_seeds, cs.n_conditions, T, output_dim)
+    all_xs = [jnp.stack(xs) for xs in zip(*all_xs)]  # shape: (cs.n_seeds, cs.n_conditions, T, N_xs)
+    all_zs = jnp.stack(all_zs)  # shape: (cs.n_seeds, cs.n_conditions, T, N_zs)
+    return all_ys, all_xs, all_zs
+
+
+def simulate_opto(params_nm):
+    # simulate opto stimulation on striatum
+    newT = cs.config['T']
+    all_inputs, all_outputs, all_masks = self_timed_movement_task(jnp.array([cs.opto_tstart]), cs.config['T_cue'],
+                                                                  cs.config['T_wait'], cs.config['T_movement'], newT)
+    idx = jnp.arange(newT)
+    stim_temporal_profile = (idx >= cs.opto_start) & (idx < cs.opto_end)
+    stim_list = []
+    for stim in cs.spatial_stim_list:
+        stim = stim * stim_temporal_profile[:, None]
+        stim_list.append(stim)
+
+    # Generate random keys for each seed
+    rng = jax.random.PRNGKey(0)
+    batched_rng_keys = jax.random.split(rng, cs.n_opto_seeds)
+
+    # Initialize storage for all data
+    all_xs_list = []
+    all_ys_list = []
+    all_zs_list = []
+
+    # Run batched experiments for each stim
+    for stim in stim_list:
+        # Run batched simulation for all seeds
+        batched_inputs = jnp.repeat(all_inputs, cs.n_opto_seeds, axis=0)
+        batched_stim = jnp.repeat(stim[None, :], cs.n_opto_seeds, axis=0)
+        ys, xs, zs = batched_nm_rnn(
+            params_nm, cs.x0, cs.z0,  # x0 and z0 are generated internally
+            batched_inputs, cs.config['tau_x'], cs.config['tau_z'],
+            True, batched_stim, cs.test_noise_std, batched_rng_keys
+        )
+        all_xs_list.append(xs)
+        all_ys_list.append(ys)
+        all_zs_list.append(zs)
+    #all xs dimensions:
+    # 0: stimulation, 1: seed/trial, 2: time bin, 3: cell
+    return all_ys_list, all_xs_list, all_zs_list
+
+
+def get_brain_area_(brain_area, xs=None, zs=None):
+    if brain_area == 'BG' or brain_area == 'Striatum':
+        return jnp.concatenate((get_brain_area('D1', xs, zs), get_brain_area('D2', xs, zs)), axis=0)
+    elif brain_area == 'Cortex':
+        return xs[1]
+    elif brain_area == 'Thalamus':
+        return xs[2]
+    elif brain_area == 'SNc':
+        return zs
+    elif brain_area == 'All':
+        return jnp.concatenate((xs[0], xs[1], xs[2], zs), axis=0)
+    elif brain_area == 'D1':
+        x = xs[0]
+        if x.ndim == 3:
+            return x[:, :, :cs.n_d1_cells]
+        elif x.ndim == 4:
+            return x[:, :, :, :cs.n_d1_cells]
+        else:
+            raise ValueError('Invalid D1 dims')
+    elif brain_area == 'D2':
+        x = xs[0]
+        if x.ndim == 3:
+            return x[:, :, cs.n_d1_cells:]
+        elif x.ndim == 4:
+            return x[:, :, :, cs.n_d1_cells:]
+        else:
+            raise ValueError('Invalid D2 dims')
+    elif brain_area == 'nm':
+        return jax.nn.sigmoid(nln(zs) @ exc(cs.params['m'].T) + cs.params['c'])
+    else:
+        raise ValueError('Invalid brain area')
+
+
+def get_brain_area(brain_area, xs=None, zs=None, bsln_sub=False, as_rate=False):
+    """
+    Extract activity from a specific brain area.
+
+    Args:
+        brain_area: Name of brain area ('D1', 'D2', 'Cortex', 'Thalamus', 'SNc', etc.)
+        xs: State variables from RNN
+        zs: Neuromodulator state variables
+        bsln_sub: If True, subtract baseline activity (first 100 timesteps)
+        as_rate: If True, apply nln() to convert states to firing rates [0,1]
+                 Should be True for quantitative analysis (ratios, correlations)
+                 Can be False for qualitative visualization of raw states
+
+    Returns:
+        Neural activity (raw states or firing rates, optionally baseline-subtracted)
+    """
+    out = get_brain_area_(brain_area, xs, zs)
+
+    if as_rate:
+        out = nln(out)  # Apply sigmoid: states → rates [0,1]
+
+    if bsln_sub:
+        bsln = out[:, :100].mean(axis=1)
+        out = out - bsln[:, None]
+
+    return out
+
+
+def sem(data, axis=0):
+    return jnp.std(data, axis=axis) / jnp.sqrt(data.shape[axis] - 1)
+
+
+# Helper function to calculate mean ± SEM
+def compute_mean_sem(data):
+    return jnp.mean(data, axis=0), sem(data, axis=0)
+
+
+def align_to_cue(data, cue_start, bsln_sub=False, new_T=50):
+    """
+    align data to the cue
+    data: shape (n_conditions, T, N) or (n_conditions, T)
+    cue_start: shape (n_conditions,)
+    return: shape (n_conditions, new_T, N) or (n_conditions, new_T)
+    """
+    n_conditions = data.shape[0]
+    time = data.shape[1]
+    ind_range = jnp.arange(time)
+    new_data = []
+    if n_conditions != len(cue_start):
+        raise ValueError('n_conditions should be equal to the length of cue_start')
+
+    for i, t in enumerate(cue_start):
+        mask = (ind_range >= t - 100) & (ind_range < t + new_T)
+        new_data.append(data[i, mask])
+
+    cue_aligned = jnp.stack(new_data)
+    if bsln_sub:
+        bsln = cue_aligned[:, :100].mean(axis=1)
+        cue_aligned = cue_aligned - bsln[:, None]
+    return cue_aligned
+
+
+def baseline_subtract(cue_aligned_data):
+    #get the first 100 time bins of each trial and average across them
+    #then average across trials
+    bsln = cue_aligned_data[:, :, :100, :].mean(axis=2)
+    # add empty dimensions in idx 2 to bsln
+    bsln = bsln[:, :, None, :]
+    return cue_aligned_data - bsln
+
+
+def remove_outliers_from_array(data, threshold=3):
+    """
+    data: shape (cs.n_conditions, T, N) or (cs.n_conditions, T)
+    """
+    #replace outliers with nan
+    z = jnp.abs((data - jnp.mean(data, axis=1, keepdims=True))) / jnp.std(data, axis=1, keepdims=True)
+    mask = z > threshold
+    return jnp.where(mask, jnp.nan, data)
+
+
+def get_d1_d2_ratio(all_xs, t_start=None, t_end=None, avg_time=False, remove_outliers=True):
+    """
+    Calculate D1/D2 activity ratio as a proportion: D1 / (D1 + D2).
+
+    Uses firing rates [0,1] without baseline subtraction to ensure:
+    - All rates are positive (biologically valid)
+    - Ratio is bounded [0,1] and interpretable
+    - No division by zero or negative denominators
+    """
+    if t_start is None:
+        t_start = 100
+    if t_end is None:
+        t_end = 300
+
+    #xs dims (trials, time-gaps, time-steps, neurons)
+    brain_areas = ['D1', 'D2']
+    area_activities = []
+    for area in brain_areas:
+        # Use firing rates without baseline subtraction for quantitative analysis
+        area_activity = get_brain_area(area, all_xs, bsln_sub=False, as_rate=True)
+        aa1 = jnp.stack(
+            [align_to_cue(area_activity[seed], cs.test_start_t, bsln_sub=False) for seed in range(cs.n_seeds)]
+        )
+        # No additional baseline subtraction - we want absolute firing rates
+
+        aa2 = aa1[:, :, t_start:t_end, :]  #get the pre-movement activity
+        aa3 = aa2.mean(axis=3)  #average across neurons
+        #aa4 = aa3.mean(axis=2) #average across time
+        area_activities.append(aa3)
+
+    if avg_time:
+        area_activities = [aa.mean(axis=2) for aa in area_activities]
+
+    #for each trial (in dim 0), calculate the ratio of D1 to D2 activity
+    ratio = area_activities[0] / (area_activities[0] + area_activities[1])
+    # ratio = area_activities[0] - area_activities[1]
+    # if avg_time:
+    #    ratio = ratio.mean(axis=2)
+    if remove_outliers:
+        ratio = remove_outliers_from_array(ratio.T).T
+
+    #ratio = ratio.flatten()
+    return ratio
+
+
+def get_slope(all_xs, t_start=None, t_end=None, avg_neurons=False, remove_outliers=True):
+    """
+    Calculate slope of activity ramping after cue onset.
+
+    Uses firing rates to ensure slopes represent biologically meaningful
+    changes in neural activity (rates/timestep) rather than raw state changes.
+    """
+    if t_start is None:
+        t_start = 20
+    if t_end is None:
+        t_end = 50
+    t_elap = t_end - t_start
+    xs_slope = []
+    for i in range(len(all_xs)):
+        xs = all_xs[i]
+        # First align to cue
+        aligned = jnp.stack(
+            [align_to_cue(xs[seed], cs.test_start_t, bsln_sub=False) for seed in range(cs.n_seeds)])
+        # Convert to firing rates
+        aligned = nln(aligned)
+        # Then baseline subtract the rates
+        aligned = baseline_subtract(aligned)
+        #get the firing rate change from t_start to t_end after the cue
+        start = aligned[:, :, t_start, :]
+        end = aligned[:, :, t_end, :]
+        slope = (end - start) / t_elap
+
+        if avg_neurons:
+            slope = slope.mean(axis=2)
+
+        if remove_outliers:
+            slope = remove_outliers_from_array(slope)
+        xs_slope.append(slope)
+
+    return xs_slope
+
+    # calculate average change in activity from 100ms post cue to 1500ms post cue
