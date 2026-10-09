@@ -21,7 +21,7 @@ def inh(w):
 
 def nln(x):
     # return jax.nn.tanh(x)
-    return jnp.maximum(0, jax.nn.tanh(x+0.1))
+    return jnp.maximum(0, jax.nn.tanh(x))
     #return jax.nn.sigmoid(4*(x-0.5))
     #return jax.nn.relu(x)
     # return jax.nn.softplus(x - 4.0)
@@ -93,9 +93,9 @@ def multiregion_nmrnn(
 
     # Optional DA-trace hyperparameters (safe defaults for backward compatibility).
     tau_d1_rise = params.get('tau_d1_rise', 10.0)
-    tau_d1_fall = params.get('tau_d1_fall', 30000.0)
+    tau_d1_fall = params.get('tau_d1_fall', 15000.0)
     tau_d2_rise = params.get('tau_d2_rise', 20.0)
-    tau_d2_fall = params.get('tau_d2_fall', 30000.0)
+    tau_d2_fall = params.get('tau_d2_fall', 15000.0)
     gain_e_d1 = params.get('gain_e_d1', 1.0)
     gain_e_d2 = params.get('gain_e_d2', 1.0)
 

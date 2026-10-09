@@ -1,0 +1,16 @@
+step 200, loss 0.01634, gnorm 0.013
+step 400, loss 0.01351, gnorm 0.007
+step 600, loss 0.01320, gnorm 0.001
+step 800, loss 0.01309, gnorm 0.001
+step 1000, loss 0.01301, gnorm 0.000
+step 1200, loss 0.01289, gnorm 0.001
+step 1400, loss 0.01243, gnorm 0.001
+step 1600, loss 0.01178, gnorm 0.001
+step 1800, loss 0.01139, gnorm 0.001
+step 2000, loss 0.01092, gnorm 0.001
+step 2200, loss 0.00977, gnorm 0.002
+step 2400, loss 0.00797, gnorm 0.006
+step 2600, loss 0.00786, gnorm 0.003
+step 2800, loss 0.01283, gnorm 0.003
+step 3000, loss 0.01218, gnorm 0.001
+tau_x_400_seed_13_keepopt done in 477s, final loss 0.0107

@@ -71,7 +71,7 @@ default_config = dict(
     O=1,      # output dimension
     # Model Hyperparameters
     tau_x=15,
-    tau_z=150, #roughly time constant needed for DA levels to fall to baseline according to laheri and bevan
+    tau_z=40, #roughly time constant needed for DA levels to fall to baseline according to laheri and bevan
     noise_std=0.05,  # Standard deviation of noise
     # Timing (task) parameters
     dt=10, # ms
@@ -85,7 +85,7 @@ default_config = dict(
     T=900,
     # Training
     num_nm_only_iters=0,
-    num_full_train_iters=2000,
+    num_full_train_iters=5000,
     keyind=13,
 )
 

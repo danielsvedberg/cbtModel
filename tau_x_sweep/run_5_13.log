@@ -1,0 +1,16 @@
+step 200, loss 0.01353, gnorm 0.001
+step 400, loss 0.01274, gnorm 0.004
+step 600, loss 0.01319, gnorm 0.002
+step 800, loss 0.01247, gnorm 0.000
+step 1000, loss 0.01307, gnorm 0.001
+step 1200, loss 0.01283, gnorm 0.014
+step 1400, loss 0.01281, gnorm 0.000
+step 1600, loss 0.01256, gnorm 0.001
+step 1800, loss 0.01301, gnorm 0.018
+step 2000, loss 0.01238, gnorm 0.002
+step 2200, loss 0.01268, gnorm 0.012
+step 2400, loss 0.01337, gnorm 0.001
+step 2600, loss 0.01335, gnorm 0.001
+step 2800, loss 0.01341, gnorm 0.054
+step 3000, loss 0.01334, gnorm 0.000
+tau_x_5_seed_13 done in 484s, final loss 0.0134
