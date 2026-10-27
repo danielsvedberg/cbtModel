@@ -1,0 +1,66 @@
+{
+ "net": "hd_acute",
+ "stage": "test",
+ "cortex_off_from_cue": false,
+ "params": "seeds/3k/seed_24/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "respond": 1.0,
+ "on_time_2p5_3p5": 0.0,
+ "rt_median": 1.0,
+ "rt_iqr": [
+  0.9399999976158142,
+  1.0799999237060547
+ ],
+ "D1": {
+  "modulation": 0.36103710532188416,
+  "frac_units_modulated": 0.7,
+  "ramp_onset_vs_rt_r": 0.13296028855503692,
+  "ramp_onset_vs_rt_slope": 0.00492139552622257,
+  "ramp_lead_median_s": -0.06000000238418579
+ },
+ "D2": {
+  "modulation": 0.0560837984085083,
+  "frac_units_modulated": 0.2,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": -0.06999999284744263
+ },
+ "Cortex": {
+  "modulation": 0.35241907835006714,
+  "frac_units_modulated": 0.95,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": -0.050000011920928955
+ },
+ "Thalamus": {
+  "modulation": 0.11469820886850357,
+  "frac_units_modulated": 0.45,
+  "ramp_onset_vs_rt_r": 0.7919436453846947,
+  "ramp_onset_vs_rt_slope": 0.18942596398630454,
+  "ramp_lead_median_s": -0.06000000238418579
+ },
+ "SNc": {
+  "modulation": 0.35631683468818665,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": -0.06000000238418579
+ }
+}

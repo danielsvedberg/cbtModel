@@ -1,0 +1,62 @@
+22:58:13 seed=13 cond=intact exit=0
+22:59:55 seed=13 cond=ctx_off exit=0
+23:01:42 seed=13 cond=snc_off exit=0
+23:03:30 seed=13 cond=snc_sat exit=0
+23:05:19 seed=9 cond=intact exit=0
+23:07:02 seed=9 cond=ctx_off exit=0
+23:08:47 seed=9 cond=snc_off exit=0
+23:10:33 seed=9 cond=snc_sat exit=0
+23:12:22 seed=17 cond=intact exit=0
+23:14:04 seed=17 cond=ctx_off exit=0
+23:15:48 seed=17 cond=snc_off exit=0
+23:17:33 seed=17 cond=snc_sat exit=0
+23:19:23 seed=21 cond=intact exit=0
+23:21:05 seed=21 cond=ctx_off exit=0
+23:22:50 seed=21 cond=snc_off exit=0
+23:24:36 seed=21 cond=snc_sat exit=0
+23:24:36 DONE
+09:35:58 seed=29 cond=intact exit=0
+09:37:40 seed=29 cond=ctx_off exit=0
+09:39:29 seed=29 cond=snc_off exit=0
+09:41:14 seed=29 cond=snc_sat exit=0
+09:41:14 DONE
+11:20:00 seed=22 cond=intact exit=0
+11:21:42 seed=22 cond=ctx_off exit=0
+11:23:31 seed=22 cond=snc_off exit=0
+11:25:17 seed=22 cond=snc_sat exit=0
+11:25:17 DONE
+13:01:12 seed=7 cond=intact exit=0
+13:02:55 seed=7 cond=ctx_off exit=0
+13:04:40 seed=7 cond=snc_off exit=0
+13:06:27 seed=7 cond=snc_sat exit=0
+13:06:27 DONE
+14:41:26 seed=23 cond=intact exit=0
+14:43:09 seed=23 cond=ctx_off exit=0
+14:44:54 seed=23 cond=snc_off exit=0
+14:46:43 seed=23 cond=snc_sat exit=0
+14:46:43 DONE
+16:24:53 seed=1 cond=intact exit=0
+16:26:35 seed=1 cond=ctx_off exit=0
+16:28:21 seed=1 cond=snc_off exit=0
+16:30:08 seed=1 cond=snc_sat exit=0
+16:30:08 DONE
+18:07:57 seed=3 cond=intact exit=0
+18:09:40 seed=3 cond=ctx_off exit=0
+18:11:25 seed=3 cond=snc_off exit=0
+18:13:11 seed=3 cond=snc_sat exit=0
+18:13:11 DONE
+19:49:21 seed=4 cond=intact exit=0
+19:51:03 seed=4 cond=ctx_off exit=0
+19:52:48 seed=4 cond=snc_off exit=0
+19:54:36 seed=4 cond=snc_sat exit=0
+19:54:36 DONE
+21:31:43 seed=24 cond=intact exit=0
+21:33:26 seed=24 cond=ctx_off exit=0
+21:35:12 seed=24 cond=snc_off exit=0
+21:36:59 seed=24 cond=snc_sat exit=0
+21:36:59 DONE
+23:14:44 seed=6 cond=intact exit=0
+23:16:21 seed=6 cond=ctx_off exit=0
+23:18:01 seed=6 cond=snc_off exit=0
+23:19:40 seed=6 cond=snc_sat exit=0
+23:19:40 DONE

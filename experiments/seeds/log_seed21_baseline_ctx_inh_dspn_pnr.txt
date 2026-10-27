@@ -1,0 +1,262 @@
+/home/dsvedberg/anaconda3/envs/cbtModel/lib/python3.11/site-packages/numpy/_core/fromnumeric.py:3860: RuntimeWarning: Mean of empty slice.
+  return _methods._mean(a, axis=axis, dtype=dtype,
+/home/dsvedberg/anaconda3/envs/cbtModel/lib/python3.11/site-packages/numpy/_core/_methods.py:145: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+{
+ "net": "baseline",
+ "stage": "dspn_pnr",
+ "cortex_off_from_cue": true,
+ "params": "seeds/3k/seed_21/params_nm.pkl",
+ "lesion": null,
+ "definition": {
+  "pulse": "+1.0 into dSPNs (units 0-9) for 5 steps; cue at t=300; 150 noise seeds",
+  "twin": "condition with the same noise key, cue and no pulse",
+  "p_triggered": "P(pulse trial crosses 0.5 within 500 ms of pulse onset) minus the same for its twin; trials whose twin moved before the pulse excluded",
+  "relax_tau": "state distance d(t) = ||rates(pulse) - rates(twin)|| over all 65 units; tau = time from pulse end until d falls below peak/e; window = pulse onset to 300 ms before the first threshold crossing of either trial (max 3 s); short = window < 350 ms (not measured, mostly trials that move soon after the pulse); censored = no 1/e decay within the window; residual_500ms = d 500 ms after pulse end / peak d (>1 = the perturbation grew)"
+ },
+ "no_cue_respond": 0.0,
+ "control_respond": 0.0,
+ "control_rt_median_s": NaN,
+ "pulses": [
+  {
+   "pulse_delay_ms": 200.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 160.0,
+   "relax_tau_ms_iqr": [
+    150.0,
+    170.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.08718322217464447,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 400.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 200.0,
+   "relax_tau_ms_iqr": [
+    200.0,
+    210.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.10390493273735046,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 600.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 150.0,
+   "relax_tau_ms_iqr": [
+    150.0,
+    160.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.08979451656341553,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 800.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.0804305225610733,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1000.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.06826911866664886,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1200.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.057859376072883606,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1400.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    120.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.0499638170003891,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1600.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.04530703276395798,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1800.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    120.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.046381786465644836,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 2000.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.044945478439331055,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 2200.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    120.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.04752600938081741,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 2400.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    127.5
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.04769124835729599,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 2600.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    120.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.04515944421291351,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 2800.0,
+   "n_valid": 150,
+   "respond": 0.0,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": null,
+   "relax_tau_ms_median": 120.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    130.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.040623556822538376,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  }
+ ]
+}
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_rt_plots.py:46: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a0.legend(fontsize=6.5, title=legend_title, title_fontsize=7, ncol=2 if nc > 12 else 1, loc='upper left')

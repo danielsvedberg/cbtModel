@@ -1,0 +1,152 @@
+{
+ "net": "hd_acute",
+ "stage": "opto",
+ "cortex_off_from_cue": false,
+ "params": "seeds/3k/seed_7/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "inh dMSN": [
+  {
+   "strength": -0.0,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.9000000357627869,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -1.2000000476837158,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -1.5,
+   "respond": 1.0,
+   "rt_median": 0.0
+  }
+ ],
+ "inh iMSN": [
+  {
+   "strength": -0.0,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.15000000596046448,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.45000001788139343,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": -0.75,
+   "respond": 1.0,
+   "rt_median": 0.0
+  }
+ ],
+ "stim dMSN": [
+  {
+   "strength": 0.0,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.9000000357627869,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 1.2000000476837158,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 1.5,
+   "respond": 1.0,
+   "rt_median": 0.0
+  }
+ ],
+ "stim iMSN": [
+  {
+   "strength": 0.0,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.15000000596046448,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.45000001788139343,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 0.0
+  },
+  {
+   "strength": 0.75,
+   "respond": 1.0,
+   "rt_median": 0.0
+  }
+ ]
+}

@@ -1,0 +1,104 @@
+intact
+open_loop
+frozen
+snc_off
+snc_sat
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/snc_critical_slowing.py:204: ConstantInputWarning: An input array is constant; the correlation coefficient is not defined.
+  spearman_s_vs_ttr=float(stats.spearmanr(X['s_pulse'], X['ttr_s'])[0]))
+{
+ "drift": {
+  "max_abs_dy_median": 8.806586265563965e-06,
+  "rt_agree_within_50ms": 1.0,
+  "s_max_abs_diff_median": 0.0028859972953796387
+ },
+ "jac_ok": null,
+ "respond": {
+  "intact": {
+   "respond": 0.16,
+   "rt_median_s": 3.63,
+   "s_after_cue": 0.5378813147544861
+  },
+  "open_loop": {
+   "respond": 0.16,
+   "rt_median_s": 3.63,
+   "s_after_cue": 0.5378813147544861
+  },
+  "frozen": {
+   "respond": 0.16,
+   "rt_median_s": 3.63,
+   "s_after_cue": 0.5378813147544861
+  },
+  "snc_off": {
+   "respond": 0.16,
+   "rt_median_s": 3.63,
+   "s_after_cue": 0.5378813147544861
+  },
+  "snc_sat": {
+   "respond": 0.92,
+   "rt_median_s": 3.06,
+   "s_after_cue": 0.6679238677024841
+  }
+ },
+ "regression": {
+  "n": 117,
+  "outcome": "log(residual_500ms), delay fixed effects, standardized predictors, bootstrap CI",
+  "s_only": {
+   "s_pulse": {
+    "beta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   }
+  },
+  "ttr_only": {
+   "ttr_s": {
+    "beta": -0.2389277663102498,
+    "ci95": [
+     -0.33034729465091345,
+     -0.164404136919414
+    ]
+   }
+  },
+  "s_and_ttr": {
+   "s_pulse": {
+    "beta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "ttr_s": {
+    "beta": -0.2389277663102498,
+    "ci95": [
+     -0.33034729465090634,
+     -0.1644041369194147
+    ]
+   }
+  },
+  "s_ttr_y": {
+   "s_pulse": {
+    "beta": 0.0,
+    "ci95": [
+     0.0,
+     0.0
+    ]
+   },
+   "ttr_s": {
+    "beta": -0.218190489628304,
+    "ci95": [
+     -0.3131486723430288,
+     -0.14292116458919055
+    ]
+   },
+   "y_pulse": {
+    "beta": 0.11936392718717648,
+    "ci95": [
+     0.04131243191595444,
+     0.20326877476457408
+    ]
+   }
+  },
+  "spearman_s_vs_ttr": NaN
+ }
+}

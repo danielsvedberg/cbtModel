@@ -1,0 +1,69 @@
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+grep: seeds/3k/progress.log: No such file or directory
+seeds/run_3k.sh: line 21: 1242787 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1251145 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1259557 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1268000 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1277452 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1285777 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1294157 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1303614 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1312002 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1321359 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1329636 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1339090 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1347670 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1357049 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1367272 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1376660 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1384976 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1393274 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1401484 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1409818 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1418129 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1427650 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1435916 Segmentation fault      (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1445713 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1
+seeds/run_3k.sh: line 21: 1465664 Aborted                 (core dumped) ITERS=3000 JAX_PLATFORMS=cpu python seeds/run_seed.py $s $st 3k/seed_$s > seeds/3k/seed_$s/log_$st.txt 2>&1

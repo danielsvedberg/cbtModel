@@ -1,0 +1,2 @@
+seeds/run_3k.sh: line 34: syntax error near unexpected token `)'
+seeds/run_3k.sh: line 34: `e +%T) seed=$s stage=$st exit=$?" >> $P'

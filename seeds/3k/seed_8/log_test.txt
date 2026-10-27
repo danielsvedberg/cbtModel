@@ -1,0 +1,66 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:213: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:233: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+
+=== D1/D2 Ratio Verification ===
+Shape: (100, 6)
+Range: [0.0383, 0.0918]
+Mean: 0.0613
+All values in [0,1]? True
+Any NaN values? False
+===================================
+
+0.924
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:977: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+testing_script failed, computing metrics directly: ValueError('Cannot calculate a linear regression if all x values are identical')
+{
+ "seed": 8,
+ "respond": 0.34833333333333333,
+ "on_time_2p5_3p5": 0.34833333333333333,
+ "rt_median": 3.069999933242798,
+ "rt_iqr": [
+  3.0,
+  3.1499998569488525
+ ],
+ "D1": {
+  "modulation": 0.3801790773868561,
+  "frac_units_modulated": 0.4,
+  "ramp_onset_vs_rt_r": 0.6305734005259378,
+  "ramp_onset_vs_rt_slope": 0.3178961683102524,
+  "ramp_lead_median_s": 1.639999942779541
+ },
+ "D2": {
+  "modulation": 0.6644723415374756,
+  "frac_units_modulated": 1.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "Cortex": {
+  "modulation": 0.4907240867614746,
+  "frac_units_modulated": 0.95,
+  "ramp_onset_vs_rt_r": 0.5414347280943893,
+  "ramp_onset_vs_rt_slope": 0.3058636811211003,
+  "ramp_lead_median_s": 1.5899999332427979
+ },
+ "Thalamus": {
+  "modulation": 0.1103198230266571,
+  "frac_units_modulated": 0.25,
+  "ramp_onset_vs_rt_r": 0.7174560258546471,
+  "ramp_onset_vs_rt_slope": 0.565837729954145,
+  "ramp_lead_median_s": 1.269999933242798
+ },
+ "SNc": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ }
+}

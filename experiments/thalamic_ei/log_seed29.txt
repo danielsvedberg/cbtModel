@@ -1,0 +1,167 @@
+first sim done
+twin/pulse RT identical to pnr_determinants: True
+{
+ "net_rise_lead_s": {
+  "median": 0.0,
+  "iqr": [
+   0.0,
+   0.0
+  ],
+  "n": 101
+ },
+ "mean_rate_crossing_lead_s": null,
+ "lam_t": {
+  "max_median": 0.9786320924758911,
+  "frac_trials_above_1": 0.0
+ },
+ "B_prepulse": {
+  "stop \u22125": {
+   "outcome": "trig",
+   "n": 2685,
+   "p": 0.0,
+   "within_delay_auc": {
+    "E": null,
+    "I": null,
+    "E\u2212I": null,
+    "E/I": null,
+    "dE/dt": null,
+    "dI/dt": null,
+    "d(E\u2212I)/dt": null,
+    "E_bg": null,
+    "I_bg": null,
+    "E_rec": null,
+    "I_rec": null,
+    "G_E": null,
+    "G_I": null,
+    "G_E\u2212G_I": null,
+    "progress": null,
+    "thalamus": null,
+    "y": null
+   },
+   "cv": {
+    "delay": NaN,
+    "delay_state": NaN,
+    "delay_EI": NaN,
+    "delay_state_EI": NaN
+   }
+  },
+  "dSPN +1": {
+   "outcome": "surv",
+   "n": 1405,
+   "p": 0.3807829181494662,
+   "within_delay_auc": {
+    "E": 0.614,
+    "I": 0.609,
+    "E\u2212I": 0.624,
+    "E/I": 0.62,
+    "dE/dt": 0.577,
+    "dI/dt": 0.559,
+    "d(E\u2212I)/dt": 0.55,
+    "E_bg": 0.613,
+    "I_bg": 0.549,
+    "E_rec": 0.619,
+    "I_rec": 0.607,
+    "G_E": 0.49,
+    "G_I": 0.527,
+    "G_E\u2212G_I": 0.415,
+    "progress": 0.63,
+    "thalamus": 0.616,
+    "y": 0.616
+   },
+   "cv": {
+    "delay": 0.7968600279299602,
+    "delay_state": 0.8436609732516919,
+    "delay_EI": 0.8502051777849393,
+    "delay_state_EI": 0.8496207970780965
+   }
+  },
+  "iSPN \u22121": {
+   "outcome": "trig",
+   "n": 2685,
+   "p": 0.07895716945996276,
+   "within_delay_auc": {
+    "E": 0.974,
+    "I": 0.964,
+    "E\u2212I": 0.964,
+    "E/I": 0.901,
+    "dE/dt": 0.795,
+    "dI/dt": 0.925,
+    "d(E\u2212I)/dt": 0.426,
+    "E_bg": 0.974,
+    "I_bg": 0.815,
+    "E_rec": 0.97,
+    "I_rec": 0.967,
+    "G_E": 0.683,
+    "G_I": 0.842,
+    "G_E\u2212G_I": 0.165,
+    "progress": 0.978,
+    "thalamus": 0.97,
+    "y": 0.969
+   },
+   "cv": {
+    "delay": 0.9468781710396814,
+    "delay_state": 0.9955634055344895,
+    "delay_EI": 0.9956206273031762,
+    "delay_state_EI": 0.9957751260786304
+   }
+  }
+ },
+ "C_postpulse_pooled_auc": {
+  "-10 ms": {
+   "E\u2212I": 0.939,
+   "E": 0.94,
+   "I": 0.891,
+   "G_E\u2212G_I": 0.598,
+   "y": 0.938,
+   "thalamus": 0.939
+  },
+  "+50 ms": {
+   "E\u2212I": 0.977,
+   "E": 0.969,
+   "I": 0.74,
+   "G_E\u2212G_I": 0.75,
+   "y": 0.976,
+   "thalamus": 0.974,
+   "\u0394(E\u2212I) since pulse": 0.815
+  },
+  "cv_at_pulse_end": {
+   "type_delay": 0.9771399188889908,
+   "type_delay_EI": 0.9934392193637717,
+   "type_delay_y": 0.9932409075883415,
+   "EI_only": 0.9875251124784755
+  },
+  "per_type_EI_auc": {
+   "stop \u22120.1": null,
+   "stop \u22120.25": 0.977,
+   "stop \u22120.5": 0.984,
+   "stop \u22121": 0.986,
+   "stop \u22122.5": 0.852,
+   "stop \u22125": null,
+   "stop \u221210": null,
+   "dSPN \u22125": null,
+   "iSPN \u22121": 0.992,
+   "iSPN \u22125": 0.997,
+   "dSPN +0.25": 0.966,
+   "dSPN +0.5": 0.969,
+   "dSPN +1": 0.968
+  },
+  "+100 ms": {
+   "E\u2212I": 0.969,
+   "E": 0.982,
+   "I": 0.826,
+   "G_E\u2212G_I": 0.737,
+   "y": 0.987,
+   "thalamus": 0.986,
+   "\u0394(E\u2212I) since pulse": 0.788
+  },
+  "+150 ms": {
+   "E\u2212I": 0.954,
+   "E": 0.989,
+   "I": 0.914,
+   "G_E\u2212G_I": 0.7,
+   "y": 0.992,
+   "thalamus": 0.991,
+   "\u0394(E\u2212I) since pulse": 0.723
+  }
+ }
+}

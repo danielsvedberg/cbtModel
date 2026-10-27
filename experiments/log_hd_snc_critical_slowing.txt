@@ -1,0 +1,102 @@
+intact
+open_loop
+frozen
+snc_off
+snc_sat
+{
+ "drift": {
+  "max_abs_dy_median": 0.00012287497520446777,
+  "rt_agree_within_50ms": 1.0,
+  "s_max_abs_diff_median": 0.006339371204376221
+ },
+ "jac_ok": null,
+ "respond": {
+  "intact": {
+   "respond": 0.28,
+   "rt_median_s": 3.08,
+   "s_after_cue": 0.6405367255210876
+  },
+  "open_loop": {
+   "respond": 0.28,
+   "rt_median_s": 3.08,
+   "s_after_cue": 0.6395279169082642
+  },
+  "frozen": {
+   "respond": 0.0,
+   "rt_median_s": null,
+   "s_after_cue": 0.6121826767921448
+  },
+  "snc_off": {
+   "respond": 0.0,
+   "rt_median_s": null,
+   "s_after_cue": 0.5267809629440308
+  },
+  "snc_sat": {
+   "respond": 0.0,
+   "rt_median_s": null,
+   "s_after_cue": 0.8937393426895142
+  }
+ },
+ "regression": {
+  "n": 176,
+  "outcome": "log(residual_500ms), delay fixed effects, standardized predictors, bootstrap CI",
+  "s_only": {
+   "s_pulse": {
+    "beta": 0.20763159505488404,
+    "ci95": [
+     0.12735452609073422,
+     0.2787756211349295
+    ]
+   }
+  },
+  "ttr_only": {
+   "ttr_s": {
+    "beta": -0.25239690223751504,
+    "ci95": [
+     -0.3101951347823443,
+     -0.1867967985700179
+    ]
+   }
+  },
+  "s_and_ttr": {
+   "s_pulse": {
+    "beta": 0.06783124184896568,
+    "ci95": [
+     -0.008243764359013238,
+     0.14567720082086294
+    ]
+   },
+   "ttr_s": {
+    "beta": -0.22858488009667294,
+    "ci95": [
+     -0.30020287599828355,
+     -0.14848001830949817
+    ]
+   }
+  },
+  "s_ttr_y": {
+   "s_pulse": {
+    "beta": 0.06390730689208605,
+    "ci95": [
+     -0.0369454394316922,
+     0.1601367791111215
+    ]
+   },
+   "ttr_s": {
+    "beta": -0.2280457518660105,
+    "ci95": [
+     -0.29829550868294485,
+     -0.14824557388288043
+    ]
+   },
+   "y_pulse": {
+    "beta": 0.005205127063233894,
+    "ci95": [
+     -0.053641875952608276,
+     0.06653755075336021
+    ]
+   }
+  },
+  "spearman_s_vs_ttr": -0.8877610014702974
+ }
+}

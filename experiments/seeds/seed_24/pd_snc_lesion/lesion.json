@@ -1,0 +1,14 @@
+{
+ "kind": "PD: SNc lesion",
+ "units": "SNc (x_nm)",
+ "n_lesioned": 4,
+ "n_total": 5,
+ "fraction": 0.8,
+ "lesioned_idx": [
+  0,
+  1,
+  3,
+  4
+ ],
+ "note": "75% of 5 units rounded up to 4 (80%); rng default_rng(2026)"
+}

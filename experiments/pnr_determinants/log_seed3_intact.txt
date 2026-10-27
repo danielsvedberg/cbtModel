@@ -1,0 +1,8 @@
+first sim done
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_determinants.py:272: RuntimeWarning: All-NaN slice encountered
+  yv = [np.nanmedian(v[b == i]) if key == 'shift' else v[b == i].mean() for i in ok]
+stop −5 {'triggered': {'delay': 0.99, 'state': 0.998, 'delay+state': 0.998}, 'survive': {'delay': 0.896, 'state': 0.951, 'delay+state': 0.951, 'ttr': 0.9, 'delay+ttr': 0.899}}
+iSPN −5 {'triggered': {'delay': 0.99, 'state': 0.992, 'delay+state': 0.993}, 'survive': {'delay': 0.989, 'state': 0.994, 'delay+state': 0.994, 'ttr': 0.988, 'delay+ttr': 0.991}}
+dSPN +1 {'triggered': {'delay': 0.933, 'state': 0.96, 'delay+state': 0.96}, 'survive': {'delay': 0.581, 'state': 0.841, 'delay+state': 0.841, 'ttr': 0.601, 'delay+ttr': 0.611}}
+stop −5 ttr50 by delay: [inf, None, inf, inf, inf, 1.6563106796116507, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+min amp trigger50: {'stop': [None, None, None, None, None, None, None, None, None, None, 5.0, 2.5, 1.0, 1.0], 'dSPN+': [None, None, None, None, None, None, None, None, None, None, None, None, None, None]}

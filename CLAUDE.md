@@ -37,7 +37,7 @@ Run everything from the repo root:
 | Train | `training_script.py` | `params_nm.pkl` (best params from `fit_nm_rnn`) |
 | Test | `testing_script.py` | output and area activity, RT distribution, response-time-binned activity, D1/D2 ratio correlograms |
 | Opto | `opto_script.py` | inhibit/stimulate dSPN or iSPN at 1–2.75 s after the cue, then plot activity and RT CDFs |
-| Point of no return | `test_pnr_nm.py` | cue-magnitude sweep, cue-duration sweep, and dynamic stop-signal test (a −5 pulse into all SPNs for 50 ms at 0.2–2.8 s after the cue); output in `plots/pnr_test/` and `plots/png/pnr_*` |
+| Point of no return | `test_pnr_nm.py` (needs the GPU; on CPU the XLA compile runs out of memory) | cue-magnitude sweep, cue-duration sweep, and dynamic stop-signal test (a −5 pulse into all SPNs for 50 ms at 0.2–2.8 s after the cue); output in `plots/pnr_test/` and `plots/png/pnr_*` |
 
 Other scripts:
 - `test_pnr.py`, `*_ffin.py` and `params_nm_ffin.pkl` belong to the older ffin model variant.
@@ -78,6 +78,9 @@ This config and parameter set produced every property the network is meant to sh
 - The loss bounces between the 0.013 never-move plateau and dips.
 - The best chunk ends at step 800, with logged loss 0.0068. The saved params are the update right after it.
 - From about step 2200 the loss sits flat on the plateau. **So the baseline is effectively an ~800-iteration model**, and the extra iterations add nothing.
+- From 2026-10-08, `config_script.py` sets `num_full_train_iters` = 2000.
+  - The first 2000 steps of training are deterministic and identical to the 5000-iteration run, and the step-800 checkpoint (0.0068) still beats every later one.
+  - So 2000 iterations select the same baseline params.
 
 **Frozen copy:** `baselines/2026-10-08_12a8ade/` holds the scripts, `params_nm.pkl` and the plots from this run. The plots are copied there because `.gitignore` excludes every png/svg under `plots/`. Three very large 900-dpi figures were downsampled.
 
@@ -96,7 +99,47 @@ Or copy the files back from `baselines/2026-10-08_12a8ade/`.
   - **Adam reset:** Adam's state is reset every `log_interval` (200).
   - **best_params one step late:** the saved `best_params` are one update after the step whose loss selected them.
 - **Code defaults:** the `tau_d*` defaults live in `model_functions.py`, so editing them silently changes the baseline even with the same `params_nm.pkl`.
-- **Not tested:** whether the properties hold for other seeds.
+- **Other seeds do not reproduce it** (`seeds/README.md`, 2026-10-09).
+  - Init seeds 1–5 under the same config respond on 0–44% of trials, against 90% for the baseline, and show weaker or no RT-scaled ramps.
+  - **Seed 1 comes closest, and the user rates it pretty good:** 44% responding, correct opto directions, and a clean PNR curve with few spontaneous moves. It is a candidate second reference.
+  - Retraining seed 13 with ~1e-8 numerical differences (two GPU jobs at once) also failed.
+  - The baseline is a lucky trajectory, not a robust outcome of the config.
+- **The 3000-iteration batch** (30 seeds, `seeds/README.md` and `seeds/3k/scorecard.md`) gave the same verdict.
+  - **Only the baseline scores 5 of 5** target properties. Seeds 9, 17 and 21 score 4.
+  - **Seed 9** has RT-tracking ramps in all areas, a clean PNR curve and the right opto signs, but responds on only 21% of trials.
+  - **A silent untrained network predicts trainability:** no SPN, cortical or thalamic activity before the cue. 7 of 9 silent inits, including 13, reached ≥ 50% responding, against a median of 21% for self-active inits (p = 0.039).
+  - **Silence doesn't give the full set of properties**; that still looks like trajectory luck.
+- **Train one job at a time on the GPU.** Run alone, training reproduced bit-identically every time; concurrent jobs did not.
+- **Spontaneous moves:** the baseline reaches threshold on about 55% of no-cue trials within 6 s (PNR tests).
+
+## Perturbation and lesion experiments (`experiments/README.md`, 2026-10-10)
+
+`experiments/perturb_model.py` adds SNc-clamp and lesion hooks to a copy of the model (identical output with hooks off); `model_functions.py` is unchanged. On the baseline:
+- **At `tau_z` = 40, SNc is a gain, not the timer.** Silencing SNc from the cue cuts responding from 90% to 22% but leaves ramp timing almost unchanged. Saturating it gives 100% responding at 2.49 s.
+- **Critical slowing before commitment.** After a +1 dSPN pulse, perturbations decay within 50–160 ms up to 1.2 s after the cue. From 1.4 s on they increasingly fail to decay, and from 1.8 s they grow.
+- **SNc and critical slowing** (`experiments/snc_critical_slowing.py`): the instability before movement is in the striatum–cortex–thalamus loop. It is unchanged with SNc frozen or open-loop, and the Jacobian with SNc held fixed crosses |λ| = 1 about 1.2 s before RT. The loop goes unstable on a schedule set by time since the cue, whatever the DA level; DA shifts how soon the network escapes to threshold afterwards (RT). SNc itself is a stable ~2 s integrator. In the HD-retrained network, by contrast, SNc dynamics carry the timing.
+- **PD (4 of 5 SNc units lesioned):** acutely 17% responding, rescued to 88% by SNc stimulation. Retraining collapsed it onto the never-move plateau.
+- **HD (8 of 10 iSPNs lesioned):** acutely the output saturates before the cue. Retraining recovered 30% on-time responding.
+- **Seeds 9, 17, 21** (same tests and lesioned units, 2026-10-11; `experiments/README.md`). Every network shares:
+  - SNc stimulation speeds responses;
+  - late stop pulses always trigger responses;
+  - critical slowing after a dSPN pulse, peaking at 1.2–2.0 s after the cue;
+  - a mid-delay dSPN pulse *lowers* responding.
+
+  The baseline is the outlier on three counts:
+  - only it keeps responding (22%) with SNc silenced; the seeds drop to 0%;
+  - only acute PD in the baseline is rescued by SNc stimulation;
+  - only PD in the baseline collapses after retraining; the seeds recover 19–98% responding.
+  - **Among nine more seeds (opto score > 0.75, 2026-10-12) none of the three is unique:** seeds 22/24 are also rescued from PD, 23/4/24 also collapse after PD retraining, 22 also keeps responding with SNc off. See report Section 9.
+- **PNR and bistability report** (`experiments/report/pnr_bistability_report.md`, 2026-10-11):
+  - **Cancellation window:** a response can only be cancelled inside a window that coincides with each network's critical-slowing peak.
+  - **PNR:** late in that window it sits about 0.6–1.0 s before each trial's own movement. In the baseline that matches the Jacobian instability about 1.2 s before movement.
+  - **Pathway:** commitment is triggered via iSPN → thalamus disinhibition. dSPN inhibition never triggers.
+  - **Dopamine:** saturating SNc removes the cancellable window; silencing SNc deepens it.
+  - **Cortex off from cue + 100 ms:** no responses, no critical slowing.
+  - **What "bistable" means here:** a threshold with transient all-or-none excursions. Coexisting stable states were not tested.
+  - **Across 13 networks** (Section 9; `experiments/report/seed_comparison.py`): the iSPN pathway holds in 13/13, cortex-off in 12/13 (seed 23 responds when cortex is silenced), trough–critical-slowing alignment in 10/11. The movement-locked edge holds in only 6/13, and SNc stimulation suppresses responding in 4 seeds.
+- **Thalamic E/I and commitment** (`experiments/thalamic_ei/README.md`, 2026-10-13): the hypothesis that commitment is set by E/I balance (or its rate of change) at the readout thalamus was not supported. Balance measures add nothing beyond time since cue and state, and pulse types trigger at different E−I. Structurally, readout-weighted dSPN/iSPN weight onto thalamus predicts the PNR edge (ρ −0.83, n = 11). Connectivity matrices: `experiments/connectivity/`.
 
 ## Mechanistic leads (from earlier configs; re-check on the baseline)
 

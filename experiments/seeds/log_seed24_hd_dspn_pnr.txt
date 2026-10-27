@@ -1,0 +1,273 @@
+{
+ "net": "hd",
+ "stage": "dspn_pnr",
+ "cortex_off_from_cue": false,
+ "params": "experiments/seeds/seed_24/hd_ispn_lesion/training/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "definition": {
+  "pulse": "+1.0 into dSPNs (units 0-9) for 5 steps; cue at t=300; 150 noise seeds",
+  "twin": "condition with the same noise key, cue and no pulse",
+  "p_triggered": "P(pulse trial crosses 0.5 within 500 ms of pulse onset) minus the same for its twin; trials whose twin moved before the pulse excluded",
+  "relax_tau": "state distance d(t) = ||rates(pulse) - rates(twin)|| over all 65 units; tau = time from pulse end until d falls below peak/e; window = pulse onset to 300 ms before the first threshold crossing of either trial (max 3 s); short = window < 350 ms (not measured, mostly trials that move soon after the pulse); censored = no 1/e decay within the window; residual_500ms = d 500 ms after pulse end / peak d (>1 = the perturbation grew)"
+ },
+ "no_cue_respond": 0.0,
+ "control_respond": 0.35333333333333333,
+ "control_rt_median_s": 3.41,
+ "pulses": [
+  {
+   "pulse_delay_ms": 200.0,
+   "n_valid": 150,
+   "respond": 0.3333333333333333,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.03,
+   "relax_tau_ms_median": 220.0,
+   "relax_tau_ms_iqr": [
+    122.5,
+    390.0
+   ],
+   "n_tau": 138,
+   "residual_500ms_median": 0.31494760513305664,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.08
+  },
+  {
+   "pulse_delay_ms": 400.0,
+   "n_valid": 150,
+   "respond": 0.34,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": 0.0,
+   "relax_tau_ms_median": 100.0,
+   "relax_tau_ms_iqr": [
+    70.0,
+    170.0
+   ],
+   "n_tau": 148,
+   "residual_500ms_median": 0.1438823938369751,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.013333333333333334
+  },
+  {
+   "pulse_delay_ms": 600.0,
+   "n_valid": 150,
+   "respond": 0.32666666666666666,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": 0.0,
+   "relax_tau_ms_median": 60.0,
+   "relax_tau_ms_iqr": [
+    50.0,
+    80.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.09902684390544891,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 800.0,
+   "n_valid": 150,
+   "respond": 0.32666666666666666,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": 0.0,
+   "relax_tau_ms_median": 60.0,
+   "relax_tau_ms_iqr": [
+    50.0,
+    70.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.11062778532505035,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1000.0,
+   "n_valid": 150,
+   "respond": 0.34,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.01,
+   "relax_tau_ms_median": 70.0,
+   "relax_tau_ms_iqr": [
+    60.0,
+    70.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.11822662502527237,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1200.0,
+   "n_valid": 150,
+   "respond": 0.34,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.01,
+   "relax_tau_ms_median": 70.0,
+   "relax_tau_ms_iqr": [
+    60.0,
+    80.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.12881457805633545,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1400.0,
+   "n_valid": 150,
+   "respond": 0.3333333333333333,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.02,
+   "relax_tau_ms_median": 80.0,
+   "relax_tau_ms_iqr": [
+    60.0,
+    100.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.1582401841878891,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1600.0,
+   "n_valid": 150,
+   "respond": 0.32,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.03,
+   "relax_tau_ms_median": 100.0,
+   "relax_tau_ms_iqr": [
+    90.0,
+    110.0
+   ],
+   "n_tau": 150,
+   "residual_500ms_median": 0.2561560273170471,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.0
+  },
+  {
+   "pulse_delay_ms": 1800.0,
+   "n_valid": 150,
+   "respond": 0.30666666666666664,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.06,
+   "relax_tau_ms_median": 130.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    150.0
+   ],
+   "n_tau": 149,
+   "residual_500ms_median": 0.33541497588157654,
+   "n_residual": 150,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.006666666666666667
+  },
+  {
+   "pulse_delay_ms": 2000.0,
+   "n_valid": 150,
+   "respond": 0.31333333333333335,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.06,
+   "relax_tau_ms_median": 130.0,
+   "relax_tau_ms_iqr": [
+    110.0,
+    150.0
+   ],
+   "n_tau": 145,
+   "residual_500ms_median": 0.3735194206237793,
+   "n_residual": 149,
+   "frac_short_window": 0.0,
+   "frac_censored": 0.03333333333333333
+  },
+  {
+   "pulse_delay_ms": 2200.0,
+   "n_valid": 150,
+   "respond": 0.2733333333333333,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.05,
+   "relax_tau_ms_median": 100.0,
+   "relax_tau_ms_iqr": [
+    80.0,
+    130.0
+   ],
+   "n_tau": 147,
+   "residual_500ms_median": 0.40274396538734436,
+   "n_residual": 147,
+   "frac_short_window": 0.006666666666666667,
+   "frac_censored": 0.013333333333333334
+  },
+  {
+   "pulse_delay_ms": 2400.0,
+   "n_valid": 150,
+   "respond": 0.20666666666666667,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": -0.01,
+   "relax_tau_ms_median": 70.0,
+   "relax_tau_ms_iqr": [
+    60.0,
+    90.0
+   ],
+   "n_tau": 146,
+   "residual_500ms_median": 0.3828238844871521,
+   "n_residual": 136,
+   "frac_short_window": 0.02,
+   "frac_censored": 0.006666666666666667
+  },
+  {
+   "pulse_delay_ms": 2600.0,
+   "n_valid": 150,
+   "respond": 0.16666666666666666,
+   "p_triggered_within_0p5s": -0.013333333333333332,
+   "rt_shift_median_s": 0.0,
+   "relax_tau_ms_median": 80.0,
+   "relax_tau_ms_iqr": [
+    60.0,
+    100.0
+   ],
+   "n_tau": 137,
+   "residual_500ms_median": 0.39139676094055176,
+   "n_residual": 120,
+   "frac_short_window": 0.08,
+   "frac_censored": 0.006666666666666667
+  },
+  {
+   "pulse_delay_ms": 2800.0,
+   "n_valid": 149,
+   "respond": 0.18666666666666668,
+   "p_triggered_within_0p5s": 0.0,
+   "rt_shift_median_s": 0.0,
+   "relax_tau_ms_median": 100.0,
+   "relax_tau_ms_iqr": [
+    80.0,
+    130.0
+   ],
+   "n_tau": 120,
+   "residual_500ms_median": 0.43390536308288574,
+   "n_residual": 108,
+   "frac_short_window": 0.19463087248322147,
+   "frac_censored": 0.0
+  }
+ ]
+}

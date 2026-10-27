@@ -1,0 +1,18 @@
+{
+ "kind": "HD: iSPN lesion",
+ "units": "iSPN (x_bg indices 10-19)",
+ "n_lesioned": 8,
+ "n_total": 10,
+ "fraction": 0.8,
+ "lesioned_idx": [
+  10,
+  12,
+  13,
+  14,
+  16,
+  17,
+  18,
+  19
+ ],
+ "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+}

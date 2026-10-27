@@ -1,0 +1,153 @@
+08:48:20 seed=13 stage=train exit=0
+08:52:53 seed=13 stage=test exit=0
+08:54:25 seed=13 stage=opto exit=0
+08:57:57 seed=13 stage=pnr exit=0
+08:59:01 seed=1 stage=train exit=0
+09:03:45 seed=1 stage=test exit=0
+09:05:14 seed=1 stage=opto exit=0
+09:08:47 seed=1 stage=pnr exit=0
+09:09:39 seed=6 stage=train exit=0
+09:14:06 seed=6 stage=test exit=0
+09:15:32 seed=6 stage=opto exit=0
+09:19:04 seed=6 stage=pnr exit=0
+09:20:17 seed=7 stage=train exit=0
+09:24:49 seed=7 stage=test exit=0
+09:26:16 seed=7 stage=opto exit=0
+09:29:49 seed=7 stage=pnr exit=0
+09:30:54 seed=8 stage=train exit=0
+09:35:53 seed=8 stage=test exit=0
+09:37:18 seed=8 stage=opto exit=0
+09:40:50 seed=8 stage=pnr exit=0
+09:41:31 seed=9 stage=train exit=0
+09:46:09 seed=9 stage=test exit=0
+09:47:34 seed=9 stage=opto exit=0
+09:51:07 seed=9 stage=pnr exit=0
+09:52:08 seed=10 stage=train exit=0
+09:56:52 seed=10 stage=test exit=0
+09:58:18 seed=10 stage=opto exit=0
+10:01:51 seed=10 stage=pnr exit=0
+10:02:47 seed=11 stage=train exit=0
+10:07:31 seed=11 stage=test exit=0
+10:08:52 seed=11 stage=opto exit=0
+10:12:23 seed=11 stage=pnr exit=0
+10:13:25 seed=12 stage=train exit=0
+10:18:10 seed=12 stage=test exit=0
+10:19:37 seed=12 stage=opto exit=0
+10:23:09 seed=12 stage=pnr exit=0
+10:24:01 seed=14 stage=train exit=0
+10:28:49 seed=14 stage=test exit=0
+10:30:14 seed=14 stage=opto exit=0
+10:33:47 seed=14 stage=pnr exit=0
+10:34:42 seed=15 stage=train exit=0
+10:38:55 seed=15 stage=test exit=0
+10:40:17 seed=15 stage=opto exit=0
+10:43:49 seed=15 stage=pnr exit=0
+10:45:20 seed=16 stage=train exit=0
+10:50:20 seed=16 stage=test exit=0
+10:51:34 seed=16 stage=opto exit=0
+10:55:06 seed=16 stage=pnr exit=0
+10:56:02 seed=17 stage=train exit=0
+11:00:26 seed=17 stage=test exit=0
+11:01:53 seed=17 stage=opto exit=0
+11:05:25 seed=17 stage=pnr exit=0
+11:06:43 seed=18 stage=train exit=0
+11:11:35 seed=18 stage=test exit=0
+11:12:54 seed=18 stage=opto exit=0
+11:16:27 seed=18 stage=pnr exit=0
+11:17:22 seed=19 stage=train exit=0
+11:22:08 seed=19 stage=test exit=0
+11:23:36 seed=19 stage=opto exit=0
+11:27:08 seed=19 stage=pnr exit=0
+11:28:02 seed=20 stage=train exit=0
+11:32:44 seed=20 stage=test exit=0
+11:33:58 seed=20 stage=opto exit=0
+11:37:30 seed=20 stage=pnr exit=0
+11:38:40 seed=21 stage=train exit=0
+11:43:19 seed=21 stage=test exit=0
+11:44:45 seed=21 stage=opto exit=0
+11:48:17 seed=21 stage=pnr exit=0
+11:49:19 seed=22 stage=train exit=0
+11:54:01 seed=22 stage=test exit=0
+11:55:28 seed=22 stage=opto exit=0
+11:59:00 seed=22 stage=pnr exit=0
+11:59:57 seed=23 stage=train exit=0
+12:04:16 seed=23 stage=test exit=0
+12:05:42 seed=23 stage=opto exit=0
+12:09:14 seed=23 stage=pnr exit=0
+12:10:41 seed=24 stage=train exit=0
+12:14:57 seed=24 stage=test exit=0
+12:16:24 seed=24 stage=opto exit=0
+12:19:56 seed=24 stage=pnr exit=0
+12:21:21 seed=25 stage=train exit=0
+12:25:36 seed=25 stage=test exit=0
+12:26:53 seed=25 stage=opto exit=0
+12:30:26 seed=25 stage=pnr exit=0
+12:32:00 seed=26 stage=train exit=0
+12:37:05 seed=26 stage=test exit=0
+12:38:25 seed=26 stage=opto exit=0
+12:41:57 seed=26 stage=pnr exit=0
+12:42:39 seed=27 stage=train exit=0
+12:47:07 seed=27 stage=test exit=0
+12:48:36 seed=27 stage=opto exit=0
+12:52:07 seed=27 stage=pnr exit=0
+12:53:18 seed=28 stage=train exit=0
+12:58:12 seed=28 stage=test exit=0
+12:59:28 seed=28 stage=opto exit=0
+13:03:01 seed=28 stage=pnr exit=0
+13:04:01 seed=29 stage=train exit=0
+13:04:01 deadline reached, stop training
+13:04:01 GPU_LANE_DONE
+13:09:02 seed=29 stage=test exit=0
+13:10:32 seed=29 stage=opto exit=0
+13:11:22 seed=1 stage=pnr_gpu exit=0 json=yes
+13:14:14 seed=29 stage=pnr exit=0
+13:14:14 ALL_DONE
+13:17:41 seed=10 stage=pnr_gpu exit=0 json=yes
+13:23:35 seed=11 stage=pnr_gpu exit=0 json=yes
+13:29:33 seed=12 stage=pnr_gpu exit=0 json=yes
+13:35:29 seed=13 stage=pnr_gpu exit=0 json=yes
+13:41:21 seed=14 stage=pnr_gpu exit=0 json=yes
+13:47:15 seed=15 stage=pnr_gpu exit=0 json=yes
+13:53:08 seed=16 stage=pnr_gpu exit=0 json=yes
+13:59:03 seed=17 stage=pnr_gpu exit=0 json=yes
+14:04:57 seed=18 stage=pnr_gpu exit=0 json=yes
+14:10:51 seed=19 stage=pnr_gpu exit=0 json=yes
+14:16:44 seed=20 stage=pnr_gpu exit=0 json=yes
+14:22:37 seed=21 stage=pnr_gpu exit=0 json=yes
+14:28:30 seed=22 stage=pnr_gpu exit=0 json=yes
+14:34:23 seed=23 stage=pnr_gpu exit=0 json=yes
+14:40:18 seed=24 stage=pnr_gpu exit=0 json=yes
+14:46:11 seed=25 stage=pnr_gpu exit=0 json=yes
+14:52:04 seed=26 stage=pnr_gpu exit=0 json=yes
+14:57:57 seed=27 stage=pnr_gpu exit=0 json=yes
+15:03:50 seed=28 stage=pnr_gpu exit=0 json=yes
+15:09:44 seed=29 stage=pnr_gpu exit=0 json=yes
+15:15:38 seed=6 stage=pnr_gpu exit=0 json=yes
+15:21:31 seed=7 stage=pnr_gpu exit=0 json=yes
+15:27:26 seed=8 stage=pnr_gpu exit=0 json=yes
+15:33:19 seed=9 stage=pnr_gpu exit=0 json=yes
+15:33:19 PNR_DONE
+--- 2026-10-10 batch 2: seeds 30 2 3 4 5 ---
+00:13:23 ALL_DONE
+00:24:03 seed=30 stage=train exit=0
+00:29:07 seed=30 stage=test exit=0
+00:30:22 seed=30 stage=opto exit=0
+00:30:36 seed=30 stage=pnr exit=0 json=yes
+00:41:20 seed=2 stage=train exit=0
+00:46:24 seed=2 stage=test exit=0
+00:47:47 seed=2 stage=opto exit=0
+00:47:52 seed=2 stage=pnr exit=0 json=yes
+00:58:30 seed=3 stage=train exit=0
+01:03:18 seed=3 stage=test exit=0
+01:04:49 seed=3 stage=opto exit=0
+01:04:59 seed=3 stage=pnr exit=0 json=yes
+01:15:37 seed=4 stage=train exit=0
+01:20:18 seed=4 stage=test exit=0
+01:21:44 seed=4 stage=opto exit=0
+01:22:04 seed=4 stage=pnr exit=0 json=yes
+01:32:42 seed=5 stage=train exit=0
+01:37:45 seed=5 stage=test exit=0
+01:39:01 seed=5 stage=opto exit=0
+01:39:01 BATCH2_DONE
+01:39:12 seed=5 stage=pnr exit=0 json=yes
+01:39:12 GPU_LANE_DONE

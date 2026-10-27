@@ -1,0 +1,83 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:213: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:233: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+
+=== D1/D2 Ratio Verification ===
+Shape: (100, 6)
+Range: [0.2905, 0.3408]
+Mean: 0.3104
+All values in [0,1]? True
+Any NaN values? False
+===================================
+
+2.033735179458516e-06
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:977: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+testing_script failed, computing metrics directly: ValueError('Cannot calculate a linear regression if all x values are identical')
+{
+ "net": "pd",
+ "stage": "test",
+ "cortex_off_from_cue": false,
+ "params": "experiments/seeds/seed_3/pd_snc_lesion/training/params_nm.pkl",
+ "lesion": {
+  "kind": "PD: SNc lesion",
+  "units": "SNc (x_nm)",
+  "n_lesioned": 4,
+  "n_total": 5,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   0,
+   1,
+   3,
+   4
+  ],
+  "note": "75% of 5 units rounded up to 4 (80%); rng default_rng(2026)"
+ },
+ "respond": 0.21333333333333335,
+ "on_time_2p5_3p5": 0.21333333333333335,
+ "rt_median": 3.0349998474121094,
+ "rt_iqr": [
+  2.9700000286102295,
+  3.0999999046325684
+ ],
+ "D1": {
+  "modulation": 0.06945271790027618,
+  "frac_units_modulated": 0.3,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 2.034999966621399
+ },
+ "D2": {
+  "modulation": 0.11036567389965057,
+  "frac_units_modulated": 1.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 2.034999966621399
+ },
+ "Cortex": {
+  "modulation": 0.11601462215185165,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": 0.036309144126793376,
+  "ramp_onset_vs_rt_slope": 0.10961206618882133,
+  "ramp_lead_median_s": 0.7399999332427978
+ },
+ "Thalamus": {
+  "modulation": 0.13273394107818604,
+  "frac_units_modulated": 0.5,
+  "ramp_onset_vs_rt_r": 0.7882123418968398,
+  "ramp_onset_vs_rt_slope": 0.6540013309807965,
+  "ramp_lead_median_s": 0.8999999427795411
+ },
+ "SNc": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ }
+}

@@ -1,0 +1,41 @@
+step 200, loss: 0.01342390663921833
+step 400, loss: 0.013444289565086365
+step 600, loss: 0.013367023319005966
+step 800, loss: 0.013364214450120926
+step 1000, loss: 0.013363922014832497
+step 1200, loss: 0.013363910838961601
+step 1400, loss: 0.013363907113671303
+step 1600, loss: 0.01336390245705843
+step 1800, loss: 0.013363901525735855
+step 2000, loss: 0.01336390245705843
+step 2200, loss: 0.01336390245705843
+step 2400, loss: 0.013363899663090706
+step 2600, loss: 0.013363898731768131
+step 2800, loss: 0.013363896869122982
+step 3000, loss: 0.013363898731768131
+{
+ "net": "pd",
+ "stage": "train",
+ "params": "baselines/2026-10-08_12a8ade/params_nm.pkl",
+ "lesion": {
+  "kind": "PD: SNc lesion",
+  "units": "SNc (x_nm)",
+  "n_lesioned": 4,
+  "n_total": 5,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   0,
+   1,
+   3,
+   4
+  ],
+  "note": "75% of 5 units rounded up to 4 (80%); rng default_rng(2026)"
+ },
+ "iters": 3000,
+ "start": "baseline params with lesion applied",
+ "first_step_loss": 0.011465149000287056,
+ "best_logged_loss": 0.013363896869122982,
+ "best_step": 2800,
+ "final_logged_loss": 0.013363898731768131,
+ "frac_steps_below_0p010": 0.03166666666666667
+}

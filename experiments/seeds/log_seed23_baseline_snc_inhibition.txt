@@ -1,0 +1,32 @@
+{
+ "net": "baseline",
+ "stage": "snc_inhibition",
+ "cortex_off_from_cue": false,
+ "params": "seeds/3k/seed_23/params_nm.pkl",
+ "lesion": null,
+ "definition": "SNc state clamped to -10 (rate 0) for all units from cue onset (t=250) to trial end; 1000 trials, opto noise keys; control = same trials unclamped",
+ "s_theory": {
+  "snc_silent": 0.33266448974609375,
+  "snc_saturated_live_units": 0.5071057081222534
+ },
+ "control": {
+  "respond": 0.466,
+  "rt_median_s": 3.45,
+  "rt_iqr_s": [
+   3.29,
+   3.59
+  ],
+  "s_precue": 0.4014531672000885,
+  "s_after_cue": 0.4136902987957001
+ },
+ "clamped": {
+  "respond": 0.021,
+  "rt_median_s": 3.93,
+  "rt_iqr_s": [
+   3.67,
+   4.14
+  ],
+  "s_precue": 0.4014531672000885,
+  "s_after_cue": 0.33266448974609375
+ }
+}

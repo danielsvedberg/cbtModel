@@ -1,0 +1,49 @@
+{
+ "net": "hd",
+ "stage": "snc_stimulation",
+ "cortex_off_from_cue": false,
+ "params": "experiments/seeds/seed_3/hd_ispn_lesion/training/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "definition": "SNc state clamped to +10 (rate ~1) for all units from cue onset (t=250) to trial end; 1000 trials, opto noise keys; control = same trials unclamped",
+ "s_theory": {
+  "snc_silent": 0.34528279304504395,
+  "snc_saturated_live_units": 0.8431020379066467
+ },
+ "control": {
+  "respond": 0.737,
+  "rt_median_s": 3.73,
+  "rt_iqr_s": [
+   3.61,
+   3.89
+  ],
+  "s_precue": 0.4078351855278015,
+  "s_after_cue": 0.5544992089271545
+ },
+ "clamped": {
+  "respond": 1.0,
+  "rt_median_s": 2.63,
+  "rt_iqr_s": [
+   2.51,
+   2.76
+  ],
+  "s_precue": 0.4078351855278015,
+  "s_after_cue": 0.8431017994880676
+ }
+}

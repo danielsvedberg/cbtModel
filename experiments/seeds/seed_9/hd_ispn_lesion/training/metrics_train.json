@@ -1,0 +1,30 @@
+{
+ "net": "hd",
+ "stage": "train",
+ "params": "seeds/3k/seed_9/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "iters": 3000,
+ "start": "baseline params with lesion applied",
+ "first_step_loss": 0.34442993998527527,
+ "best_logged_loss": 0.00833785068243742,
+ "best_step": 2200,
+ "final_logged_loss": 0.013160958886146545,
+ "frac_steps_below_0p010": 0.184
+}

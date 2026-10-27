@@ -1,0 +1,32 @@
+pd_acute cue magnitude
+pd_acute cue duration
+pd_acute stop pulse
+pd_acute dSPN pulse
+pd_acute dSPN respond max diff vs stored metrics: 0.0
+pd_acute stop-pulse respond max diff vs stored metrics: 1.6689300552652497e-08
+pd cue magnitude
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_rt_plots.py:46: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a0.legend(fontsize=6.5, title=legend_title, title_fontsize=7, ncol=2 if nc > 12 else 1, loc='upper left')
+pd cue duration
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_rt_plots.py:46: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a0.legend(fontsize=6.5, title=legend_title, title_fontsize=7, ncol=2 if nc > 12 else 1, loc='upper left')
+pd stop pulse
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_rt_plots.py:46: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a0.legend(fontsize=6.5, title=legend_title, title_fontsize=7, ncol=2 if nc > 12 else 1, loc='upper left')
+pd dSPN pulse
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_rt_plots.py:46: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a0.legend(fontsize=6.5, title=legend_title, title_fontsize=7, ncol=2 if nc > 12 else 1, loc='upper left')
+pd dSPN respond max diff vs stored metrics: 0.0
+pd stop-pulse respond max diff vs stored metrics: 0.0
+hd_acute cue magnitude
+hd_acute cue duration
+hd_acute stop pulse
+hd_acute dSPN pulse
+hd_acute dSPN respond max diff vs stored metrics: 0.0
+hd_acute stop-pulse respond max diff vs stored metrics: 0.0
+hd cue magnitude
+hd cue duration
+hd stop pulse
+hd dSPN pulse
+hd dSPN respond max diff vs stored metrics: 0.0
+hd stop-pulse respond max diff vs stored metrics: 5.0862630218695415e-08

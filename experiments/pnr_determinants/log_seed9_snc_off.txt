@@ -1,0 +1,8 @@
+first sim done
+/home/dsvedberg/Documents/CodeVault/cbtModel/experiments/pnr_determinants.py:279: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  a.legend(fontsize=6, ncol=2, title='delay', title_fontsize=7)
+stop −5 {'triggered': {'delay': None, 'state': None, 'delay+state': None}, 'survive': {'delay': None, 'state': None, 'delay+state': None, 'ttr': None, 'delay+ttr': None}}
+iSPN −5 {'triggered': {'delay': 0.96, 'state': 0.984, 'delay+state': 0.984}, 'survive': {'delay': None, 'state': None, 'delay+state': None, 'ttr': None, 'delay+ttr': None}}
+dSPN +1 {'triggered': {'delay': None, 'state': None, 'delay+state': None}, 'survive': {'delay': None, 'state': None, 'delay+state': None, 'ttr': None, 'delay+ttr': None}}
+stop −5 ttr50 by delay: [None, None, None, None, None, None, None, None, None, None, None, None, None, None]
+min amp trigger50: {'stop': [None, None, None, None, None, None, None, None, None, None, None, None, None, None], 'dSPN+': [None, None, None, None, None, None, None, None, None, None, None, None, None, None]}

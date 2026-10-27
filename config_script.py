@@ -85,7 +85,7 @@ default_config = dict(
     T=900,
     # Training
     num_nm_only_iters=0,
-    num_full_train_iters=5000,
+    num_full_train_iters=2000,
     keyind=13,
 )
 

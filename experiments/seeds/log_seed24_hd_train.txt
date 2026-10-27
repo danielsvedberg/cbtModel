@@ -1,0 +1,46 @@
+step 200, loss: 0.013111241161823273
+step 400, loss: 0.009340344928205013
+step 600, loss: 0.009781456552445889
+step 800, loss: 0.013365131802856922
+step 1000, loss: 0.01265548262745142
+step 1200, loss: 0.013524389825761318
+step 1400, loss: 0.013382231816649437
+step 1600, loss: 0.013398019596934319
+step 1800, loss: 0.013366129249334335
+step 2000, loss: 0.013363923877477646
+step 2200, loss: 0.013363913632929325
+step 2400, loss: 0.013363911770284176
+step 2600, loss: 0.013363908044993877
+step 2800, loss: 0.013363908976316452
+step 3000, loss: 0.013363908044993877
+{
+ "net": "hd",
+ "stage": "train",
+ "cortex_off_from_cue": false,
+ "params": "seeds/3k/seed_24/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "iters": 3000,
+ "start": "baseline params with lesion applied",
+ "first_step_loss": 0.023429784923791885,
+ "best_logged_loss": 0.009340344928205013,
+ "best_step": 400,
+ "final_logged_loss": 0.013363908044993877,
+ "frac_steps_below_0p010": 0.21066666666666667
+}

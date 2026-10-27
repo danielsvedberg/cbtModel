@@ -1,0 +1,6 @@
+first sim done
+stop −5 {'triggered': {'delay': 0.982, 'state': 0.994, 'delay+state': 0.995}, 'survive': {'delay': 0.854, 'state': 0.88, 'delay+state': 0.881, 'ttr': 0.861, 'delay+ttr': 0.859}}
+iSPN −5 {'triggered': {'delay': 0.968, 'state': 0.985, 'delay+state': 0.985}, 'survive': {'delay': 0.975, 'state': 0.981, 'delay+state': 0.981, 'ttr': 0.98, 'delay+ttr': 0.98}}
+dSPN +1 {'triggered': {'delay': 0.957, 'state': 0.991, 'delay+state': 0.991}, 'survive': {'delay': 0.833, 'state': 0.839, 'delay+state': 0.839, 'ttr': 0.85, 'delay+ttr': 0.845}}
+stop −5 ttr50 by delay: [None, inf, inf, inf, 2.3287234042553195, 2.1690476190476193, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+min amp trigger50: {'stop': [None, None, None, None, None, None, None, None, None, None, None, None, None, 2.5], 'dSPN+': [None, None, None, None, None, None, None, None, None, None, None, None, None, None]}

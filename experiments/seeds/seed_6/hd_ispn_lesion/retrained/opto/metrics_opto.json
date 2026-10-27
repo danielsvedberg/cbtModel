@@ -1,0 +1,152 @@
+{
+ "net": "hd",
+ "stage": "opto",
+ "cortex_off_from_cue": false,
+ "params": "experiments/seeds/seed_6/hd_ispn_lesion/training/params_nm.pkl",
+ "lesion": {
+  "kind": "HD: iSPN lesion",
+  "units": "iSPN (x_bg indices 10-19)",
+  "n_lesioned": 8,
+  "n_total": 10,
+  "fraction": 0.8,
+  "lesioned_idx": [
+   10,
+   12,
+   13,
+   14,
+   16,
+   17,
+   18,
+   19
+  ],
+  "note": "75% of 10 iSPNs rounded up to 8 (80%); rng default_rng(2026)"
+ },
+ "inh dMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.298,
+   "rt_median": 3.43999981880188
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.283,
+   "rt_median": 4.829999923706055
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.281,
+   "rt_median": 5.069999694824219
+  },
+  {
+   "strength": -0.9000000357627869,
+   "respond": 0.273,
+   "rt_median": 5.179999828338623
+  },
+  {
+   "strength": -1.2000000476837158,
+   "respond": 0.281,
+   "rt_median": 5.329999923706055
+  },
+  {
+   "strength": -1.5,
+   "respond": 0.379,
+   "rt_median": 5.5
+  }
+ ],
+ "inh iMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.298,
+   "rt_median": 3.43999981880188
+  },
+  {
+   "strength": -0.15000000596046448,
+   "respond": 0.452,
+   "rt_median": 3.049999952316284
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.777,
+   "rt_median": 2.7300000190734863
+  },
+  {
+   "strength": -0.45000001788139343,
+   "respond": 0.958,
+   "rt_median": 2.4549999237060547
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.998,
+   "rt_median": 2.2200000286102295
+  },
+  {
+   "strength": -0.75,
+   "respond": 1.0,
+   "rt_median": 2.0199999809265137
+  }
+ ],
+ "stim dMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.298,
+   "rt_median": 3.43999981880188
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 2.2699999809265137
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 1.8899999856948853
+  },
+  {
+   "strength": 0.9000000357627869,
+   "respond": 1.0,
+   "rt_median": 1.5999999046325684
+  },
+  {
+   "strength": 1.2000000476837158,
+   "respond": 1.0,
+   "rt_median": 1.409999966621399
+  },
+  {
+   "strength": 1.5,
+   "respond": 1.0,
+   "rt_median": 1.2899999618530273
+  }
+ ],
+ "stim iMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.298,
+   "rt_median": 3.43999981880188
+  },
+  {
+   "strength": 0.15000000596046448,
+   "respond": 0.271,
+   "rt_median": 3.8299999237060547
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.248,
+   "rt_median": 4.110000133514404
+  },
+  {
+   "strength": 0.45000001788139343,
+   "respond": 0.249,
+   "rt_median": 4.409999847412109
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.266,
+   "rt_median": 4.569999694824219
+  },
+  {
+   "strength": 0.75,
+   "respond": 0.266,
+   "rt_median": 4.679999828338623
+  }
+ ]
+}
