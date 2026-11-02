@@ -1,6 +1,6 @@
 """Train/test one init seed in seeds/seed_<k>/ using the repo's scripts unchanged.
 
-usage (from repo root): python seeds/run_seed.py <seed> <stage> [<dir name>]   stage: train | test | opto | pnr
+usage (from repo root): python seeds/run_seed.py <seed> <stage> [<dir name>]   stage: train | test | opto | pnr | nmopto
 (dir name, relative to seeds/, defaults to seed_<seed>; env ITERS overrides num_full_train_iters; seeds/baseline_12a8ade holds the frozen baseline params, test stages only)
 
 Only the weight-init seed (config 'keyind') changes; the T_start draw (PRNGKey(13)),
@@ -64,23 +64,44 @@ if stage == 'train':
     losses = np.concatenate([np.asarray(l) for l in g['losses_nm']])
     np.save('losses.npy', losses)
     chunk_last = losses[199::200]
-    dump(dict(seed=seed, best_logged_loss=float(chunk_last.min()),
-              best_step=int((chunk_last.argmin() + 1) * 200),
-              final_logged_loss=float(chunk_last[-1]),
+    if 'param_hist' in __import__('inspect').getsource(mf.fit_nm_rnn):
+        # per-step selection: losses[k] is the loss of the params after k updates
+        best = dict(best_logged_loss=float(losses.min()), best_step=int(losses.argmin()), selection='every step')
+    else:
+        best = dict(best_logged_loss=float(chunk_last.min()), best_step=int((chunk_last.argmin() + 1) * 200),
+                    selection='200-step checkpoints')
+    dump(dict(seed=seed, **best, final_logged_loss=float(chunk_last[-1]),
               frac_steps_below_0p010=float((losses < 0.010).mean())))
 
 elif stage == 'test':
-    try:
-        g = run('testing_script.py')
-    except Exception as e:  # testing_script asserts/crashes when (almost) no trials respond
-        print('testing_script failed, computing metrics directly:', repr(e))
-        g = None
-    if g is None:
-        import pickle
-        ys, xs, zs = mf.test_model(pickle.load(open('params_nm.pkl', 'rb')), noise=True)
-    else:
-        ys, xs, zs = g['all_ys'], g['all_xs'], g['all_zs']
+    # testing_script.py's plots, each guarded (testing_script asserts when no trial responds)
+    import pickle
+    params = pickle.load(open('params_nm.pkl', 'rb'))
+    ys, xs, zs = mf.test_model(params, noise=True)
     rt = np.asarray(mf.get_response_times(ys, exclude_nan=False))  # s after cue end, (seeds, conds)
+    skipped = {}
+    def guard(name, f, *a):
+        try:
+            f(*a)
+        except Exception as e:
+            skipped[name] = repr(e)
+            print(f'{name} skipped: {e!r}')
+    guard('plot_output', pf.plot_output, ys)
+    guard('plot_activity_by_area', pf.plot_activity_by_area, xs, zs)
+    guard('plot_cue_algn_activity', pf.plot_cue_algn_activity, xs, zs, False)
+    if np.any(~np.isnan(rt)):
+        guard('plot_response_times', pf.plot_response_times, rt[~np.isnan(rt)])
+    else:
+        skipped['plot_response_times'] = 'no responding trials'
+    d1d2 = mf.get_d1_d2_ratio(xs, avg_time=True, remove_outliers=False)
+    guard('plot_ratio_rt_correlogram', pf.plot_ratio_rt_correlogram, d1d2, rt)
+    guard('plot_d1d2ratio_SNc_correlogram', pf.plot_d1d2ratio_SNc_correlogram, d1d2, zs, rt)
+    guard('plot_d1d2ratio_slope_correlogram', pf.plot_d1d2ratio_slope_correlogram, xs, rt)
+    if np.sum(~np.isnan(rt)) >= 3:
+        bg_gain = mf.get_bg_gain(params, zs)  # rank-2 DA gains exp(+s_d1), exp(-s_d2), replayed exactly
+        guard('plot_binned_responses', lambda: pf.plot_binned_responses(ys, xs, zs, bg_gain=bg_gain))
+    else:
+        skipped['plot_binned_responses'] = f'only {int(np.sum(~np.isnan(rt)))} responding trials'
     out = dict(seed=seed, respond=float(np.mean(~np.isnan(rt))),
                on_time_2p5_3p5=float(np.mean((rt >= 2.5) & (rt <= 3.5))),
                rt_median=float(np.nanmedian(rt)) if np.any(~np.isnan(rt)) else None,
@@ -116,6 +137,7 @@ elif stage == 'test':
             ramp_onset_vs_rt_r=float(np.corrcoef(onsets, rts)[0, 1]) if ok else None,
             ramp_onset_vs_rt_slope=float(np.polyfit(rts, onsets, 1)[0]) if ok else None,
             ramp_lead_median_s=float(np.median(rts - onsets)) if len(rts) else None)
+    out['plots_skipped'] = skipped
     dump(out)
 
 elif stage == 'opto':
@@ -147,3 +169,9 @@ elif stage == 'pnr':
                cue_dur_ms=[float(v) for v in np.asarray(g['durs']) * cs.config['dt']],
                cue_dur_prob=[float(v) for v in np.asarray(g['d_prob'])])
     dump(out)
+
+elif stage == 'nmopto':
+    import pickle
+    sys.path.insert(0, os.path.join(ROOT, 'seeds'))
+    import nm_opto
+    dump(dict(seed=seed, **nm_opto.run(pickle.load(open('params_nm.pkl', 'rb')), cs.png_folder, f'seed {seed}')))

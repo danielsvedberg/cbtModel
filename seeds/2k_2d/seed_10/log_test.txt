@@ -1,0 +1,4 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()

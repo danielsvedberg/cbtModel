@@ -1,0 +1,75 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:213: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:233: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+
+=== D1/D2 Ratio Verification ===
+Shape: (100, 6)
+Range: [0.5844, 0.6229]
+Mean: 0.6035
+All values in [0,1]? True
+Any NaN values? False
+===================================
+
+0.901
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:977: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+0.071
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:879: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+0.219
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:933: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Shape of binned_xs: [(3, 600, 20), (3, 600, 20), (3, 600, 20)]
+Shape of binned_ys: [(3, 600, 1)]
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:504: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+{
+ "seed": 37,
+ "respond": 0.008333333333333333,
+ "on_time_2p5_3p5": 0.008333333333333333,
+ "rt_median": 2.75,
+ "rt_iqr": [
+  2.7100000381469727,
+  2.75
+ ],
+ "D1": {
+  "modulation": 0.12401388585567474,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 1.11
+ },
+ "D2": {
+  "modulation": 0.06102682650089264,
+  "frac_units_modulated": 0.8,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 1.4
+ },
+ "Cortex": {
+  "modulation": 0.1265527904033661,
+  "frac_units_modulated": 1.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 1.18
+ },
+ "Thalamus": {
+  "modulation": 0.07702574133872986,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 1.08
+ },
+ "SNc": {
+  "modulation": 0.23579849302768707,
+  "frac_units_modulated": 0.8,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 1.0000000381469727
+ }
+}

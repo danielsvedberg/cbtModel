@@ -34,6 +34,6 @@ pf.plot_ratio_rt_correlogram(d1d2_ratio, response_times)
 pf.plot_d1d2ratio_SNc_correlogram(d1d2_ratio, all_zs, response_times)
 pf.plot_d1d2ratio_slope_correlogram(all_xs, response_times)
 
-pf.plot_binned_responses(all_ys, all_xs, all_zs)
+pf.plot_binned_responses(all_ys, all_xs, all_zs, bg_gain=mf.get_bg_gain(params_nm, all_zs))
 
 

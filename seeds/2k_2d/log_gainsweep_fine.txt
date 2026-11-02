@@ -1,0 +1,10 @@
+1 ctrl t80 3.24 resp 94% diag/both:partial@0.032 | diag/ctx:no@0.032 | diag/tau:no@0.128 | da/both:no@0.008 | da/ctx:no@0.008 | da/tau:no@0.032
+2 ctrl t80 3.45 resp 91% diag/both:no@0.032 | diag/ctx:no@0.064 | diag/tau:yes@0.128 | da/both:partial@0.016 | da/ctx:partial@0.016 | da/tau:partial@0.032
+3 ctrl t80 2.98 resp 82% diag/both:partial@0.032 | diag/ctx:partial@0.064 | diag/tau:yes@0.032 | da/both:partial@0.016 | da/ctx:partial@0.016 | da/tau:partial@0.032
+4 ctrl t80 0.0 resp 98% diag/both:no ramp@0.001 | diag/ctx:no ramp@0.001 | diag/tau:no ramp@0.001 | da/both:no ramp@0.001 | da/ctx:no ramp@0.001 | da/tau:no ramp@0.001
+5 ctrl t80 3.24 resp 35% diag/both:no ramp@0.016 | diag/ctx:no ramp@0.128 | diag/tau:no ramp@0.016 | da/both:no ramp@0.016 | da/ctx:no ramp@0.016 | da/tau:no ramp@0.128
+6 ctrl t80 3.08 resp 99% diag/both:no@0.064 | diag/ctx:no@0.128 | diag/tau:no@0.128 | da/both:no@0.016 | da/ctx:partial@0.032 | da/tau:no@0.064
+7 ctrl t80 3.01 resp 95% diag/both:partial@0.016 | diag/ctx:no@0.032 | diag/tau:yes@0.064 | da/both:partial@0.016 | da/ctx:partial@0.016 | da/tau:yes@0.064
+8 ctrl t80 2.96 resp 87% diag/both:partial@0.004 | diag/ctx:partial@0.008 | diag/tau:partial@0.016 | da/both:partial@0.004 | da/ctx:partial@0.004 | da/tau:partial@0.016
+9 ctrl t80 0.0 resp 100% diag/both:no ramp@0.001 | diag/ctx:no ramp@0.001 | diag/tau:no ramp@0.001 | da/both:no ramp@0.001 | da/ctx:no ramp@0.001 | da/tau:no ramp@0.001
+10 ctrl t80 3.16 resp 97% diag/both:partial@0.032 | diag/ctx:partial@0.064 | diag/tau:yes@0.128 | da/both:partial@0.016 | da/ctx:partial@0.016 | da/tau:yes@0.064

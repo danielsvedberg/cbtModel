@@ -1,0 +1,49 @@
+{
+ "seed": 20,
+ "respond": 0.0,
+ "on_time_2p5_3p5": 0.0,
+ "rt_median": null,
+ "rt_iqr": null,
+ "D1": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "D2": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "Cortex": {
+  "modulation": 0.00020657529239542782,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "Thalamus": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "SNc": {
+  "modulation": 0.0030239205807447433,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "plots_skipped": {
+  "plot_response_times": "no responding trials",
+  "plot_ratio_rt_correlogram": "ValueError('Inputs must not be empty.')",
+  "plot_d1d2ratio_SNc_correlogram": "ValueError('Inputs must not be empty.')",
+  "plot_d1d2ratio_slope_correlogram": "ValueError('Inputs must not be empty.')",
+  "plot_binned_responses": "only 0 responding trials"
+ }
+}

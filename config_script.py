@@ -5,7 +5,7 @@ import math
 import os
 
 
-def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
+def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim, m_init_scale=1.0):
     # for now assume Th/BG/C are same size, g is the same for all weight matrices
     skeys = jr.split(key, 18)
 
@@ -27,8 +27,13 @@ def init_params(key, n_bg, n_nm, g_bg, g_nm, input_dim, output_dim):
     B_nmc = (1 / math.sqrt(n_nm)) * jr.normal(skeys[8], (n_nm, n_bg))
     B_nmbg = (1 / math.sqrt(n_nm)) * jr.normal(skeys[9], (n_nm, n_bg))  # BG -> SNc
 
-    m = (1 / math.sqrt(n_nm)) * jr.normal(skeys[10], (1, n_nm))
-    c = (1 / math.sqrt(n_nm)) * jr.normal(skeys[11])
+    # rank-2 DA readout: row/entry 0 -> dSPN (s_d1), 1 -> iSPN (s_d2). Row 0 uses the same draws as the rank-1
+    # (cbtModel1D) init, so s_d1 starts identical to the 1D model's s; row 1 is a new draw from fold_in keys.
+    # m_init_scale shrinks the SNc->DA readout at init (same draws); < 1 keeps DA from dominating the step-0 loss,
+    # which otherwise drives training to silence SNc (2026-11-01 analysis of seeds/2k_2d)
+    m = (m_init_scale / math.sqrt(n_nm)) * jnp.concatenate((jr.normal(skeys[10], (1, n_nm)),
+                                                 jr.normal(jr.fold_in(skeys[10], 1), (1, n_nm))))
+    c = (1 / math.sqrt(n_nm)) * jnp.stack((jr.normal(skeys[11]), jr.normal(jr.fold_in(skeys[11], 1))))
 
     U = (1 / math.sqrt(n_bg)) * jr.normal(skeys[12], (1, n_bg))
     V_bg = (1 / math.sqrt(n_bg)) * jr.normal(skeys[13], (1, n_bg))
@@ -87,6 +92,7 @@ default_config = dict(
     num_nm_only_iters=0,
     num_full_train_iters=2000,
     keyind=13,
+    m_init_scale=float(os.environ.get('M_INIT_SCALE', 1.0)),  # scale on the init of m; env override for batches
 )
 
 # declare the config
@@ -100,7 +106,8 @@ params = init_params(
     key,
     config['n_bg'], config['n_nm'],
     config['g_bg'], config['g_nm'],
-    config['U'], config['O']
+    config['U'], config['O'],
+    m_init_scale=config['m_init_scale'],
 )
 
 #set up the number of cells in the BG and NM

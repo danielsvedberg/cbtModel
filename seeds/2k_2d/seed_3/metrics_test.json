@@ -1,0 +1,46 @@
+{
+ "seed": 3,
+ "respond": 0.7933333333333333,
+ "on_time_2p5_3p5": 0.7483333333333333,
+ "rt_median": 3.0399999618530273,
+ "rt_iqr": [
+  2.879999876022339,
+  3.2200000286102295
+ ],
+ "D1": {
+  "modulation": 0.2094724327325821,
+  "frac_units_modulated": 0.7,
+  "ramp_onset_vs_rt_r": 0.8299205664153883,
+  "ramp_onset_vs_rt_slope": 0.782930480400894,
+  "ramp_lead_median_s": 0.899999918937683
+ },
+ "D2": {
+  "modulation": 0.07247933745384216,
+  "frac_units_modulated": 0.7,
+  "ramp_onset_vs_rt_r": 0.039327302372004845,
+  "ramp_onset_vs_rt_slope": 0.08589920878900771,
+  "ramp_lead_median_s": 1.260000033378601
+ },
+ "Cortex": {
+  "modulation": 0.16901567578315735,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": 0.8235178430082131,
+  "ramp_onset_vs_rt_slope": 0.811021851805661,
+  "ramp_lead_median_s": 0.7899998378753663
+ },
+ "Thalamus": {
+  "modulation": 0.1720203459262848,
+  "frac_units_modulated": 0.8,
+  "ramp_onset_vs_rt_r": 0.882265278634267,
+  "ramp_onset_vs_rt_slope": 0.8397706465166029,
+  "ramp_lead_median_s": 0.6099999475479126
+ },
+ "SNc": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "plots_skipped": {}
+}

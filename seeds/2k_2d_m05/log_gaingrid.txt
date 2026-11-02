@@ -1,0 +1,30 @@
+1 ctrl t80 3.22 resp 81% | working 39% t80 range [0.9813664596273292, 1.0434782608695652] | thr dSPN 0.016 iSPN 0.032 | moved 0 scale R2 None scale-shift None
+2 ctrl t80 3.16 resp 97% | working 68% t80 range [0.8860759493670886, 1.8164556962025316] | thr dSPN 0.064 iSPN 0.032 | moved 83 scale R2 0.9560044960944554 scale-shift 0.23742629969147114
+3 ctrl t80 4.22 resp 100% | working 58% t80 range [0.7535545023696683, 1.319905213270142] | thr dSPN 0.008 iSPN 0.032 | moved 114 scale R2 0.9206433716319968 scale-shift 0.10768209439757842
+4 ctrl t80 2.86 resp 89% | working 44% t80 range [0.8671328671328671, 1.1398601398601398] | thr dSPN 0.032 iSPN 0.064 | moved 17 scale R2 0.8041814244423702 scale-shift 0.08006212186307159
+5 ctrl t80 3.11 resp 41% | working 14% t80 range [0.9935691318327974, 1.0289389067524115] | thr dSPN 0.004 iSPN 0.016 | moved 0 scale R2 None scale-shift None
+6 ctrl t80 3.05 resp 94% | working 58% t80 range [1.0, 1.337704918032787] | thr dSPN 0.016 iSPN 0.032 | moved 71 scale R2 0.7880111954492366 scale-shift 0.16006499945358663
+7 ctrl t80 3.24 resp 100% | working 63% t80 range [0.012345679012345678, 1.0648148148148149] | thr dSPN 0.128 iSPN 0.032 | moved 47 scale R2 0.9541446899297853 scale-shift -3.056195399474693
+8 ctrl t80 3.43 resp 67% | working 24% t80 range [0.9650145772594753, 1.0495626822157433] | thr dSPN 0.008 iSPN 0.016 | moved 0 scale R2 None scale-shift None
+9 ctrl t80 0.00 resp 100% | working 0% t80 range None | thr dSPN 0.001 iSPN 0.001 | moved 0 scale R2 None scale-shift None
+10 ctrl t80 3.53 resp 99% | working 61% t80 range [0.7110481586402266, 1.1019830028328612] | thr dSPN 0.016 iSPN 0.032 | moved 93 scale R2 0.8495008911142449 scale-shift 0.09640409342023533
+11 ctrl t80 3.14 resp 100% | working 64% t80 range [0.6305732484076433, 1.10828025477707] | thr dSPN 0.064 iSPN 0.016 | moved 76 scale R2 0.9338733130902973 scale-shift 0.09864715642824097
+12 ctrl t80 2.97 resp 96% | working 39% t80 range [0.9090909090909091, 1.0303030303030303] | thr dSPN 0.032 iSPN 0.032 | moved 5 scale R2 0.8563257103068003 scale-shift -0.0694568397165907
+13 ctrl t80 3.14 resp 59% | working 13% t80 range [0.9840764331210191, 1.019108280254777] | thr dSPN 0.004 iSPN 0.008 | moved 0 scale R2 None scale-shift None
+14 ctrl t80 3.38 resp 99% | working 54% t80 range [0.8047337278106509, 1.044378698224852] | thr dSPN 0.032 iSPN 0.064 | moved 11 scale R2 0.8966226523337071 scale-shift 0.05197317780502331
+15 ctrl t80 3.18 resp 53% | working 22% t80 range [0.9308176100628931, 1.150943396226415] | thr dSPN 0.008 iSPN 0.032 | moved 3 scale R2 0.9379019459875015 scale-shift 0.08961928157592702
+16 ctrl t80 2.99 resp 60% | working 19% t80 range [0.8862876254180602, 1.1270903010033444] | thr dSPN 0.008 iSPN 0.016 | moved 5 scale R2 0.9941141565359239 scale-shift 0.0811876222772708
+17 ctrl t80 3.04 resp 100% | working 40% t80 range [0.8322368421052632, 1.0921052631578947] | thr dSPN 0.032 iSPN 0.032 | moved 16 scale R2 0.9809532550359022 scale-shift 0.020583225908439085
+18 ctrl t80 2.97 resp 76% | working 24% t80 range [0.8888888888888888, 1.037037037037037] | thr dSPN 0.008 iSPN 0.032 | moved 2 scale R2 0.8101461888936055 scale-shift 0.022600533613278184
+19 ctrl t80 3.10 resp 100% | working 49% t80 range [0.016129032258064516, 1.0806451612903225] | thr dSPN 0.032 iSPN 0.032 | moved 29 scale R2 0.8974859377200938 scale-shift 0.3512116581519042
+20 ctrl t80 0.00 resp 0% | working 0% t80 range None | thr dSPN 0.001 iSPN 0.001 | moved 0 scale R2 None scale-shift None
+21 ctrl t80 3.19 resp 99% | working 53% t80 range [0.003134796238244514, 1.0564263322884013] | thr dSPN 0.008 iSPN 0.032 | moved 98 scale R2 0.8922485079638258 scale-shift -1.1464552290197196
+22 ctrl t80 2.90 resp 100% | working 50% t80 range [0.9206896551724137, 1.203448275862069] | thr dSPN 0.016 iSPN 0.032 | moved 40 scale R2 0.9622022749937093 scale-shift 0.05642933333237057
+23 ctrl t80 3.67 resp 100% | working 45% t80 range [0.4332425068119891, 1.1553133514986376] | thr dSPN 0.016 iSPN 0.008 | moved 89 scale R2 0.9755932897943383 scale-shift 0.24577783971350387
+24 ctrl t80 3.12 resp 79% | working 23% t80 range [0.9455128205128205, 1.0416666666666667] | thr dSPN 0.016 iSPN 0.008 | moved 1 scale R2 0.9954384762197401 scale-shift 0.016823147862712218
+25 ctrl t80 2.86 resp 35% | working 20% t80 range [0.9125874125874126, 1.0874125874125875] | thr dSPN 0.008 iSPN 0.016 | moved 3 scale R2 0.9788964557966756 scale-shift 0.03941556709947169
+26 ctrl t80 3.07 resp 94% | working 63% t80 range [0.4364820846905538, 1.228013029315961] | thr dSPN 0.032 iSPN 0.016 | moved 123 scale R2 0.9672171664496619 scale-shift 0.21769166099150106
+27 ctrl t80 3.38 resp 97% | working 68% t80 range [0.9970414201183432, 1.5887573964497042] | thr dSPN 0.032 iSPN 0.064 | moved 67 scale R2 0.8360992956743762 scale-shift 0.31201137379605665
+28 ctrl t80 0.00 resp 99% | working 0% t80 range None | thr dSPN 0.001 iSPN 0.001 | moved 0 scale R2 None scale-shift None
+29 ctrl t80 3.32 resp 99% | working 37% t80 range [0.7108433734939759, 1.141566265060241] | thr dSPN 0.008 iSPN 0.016 | moved 40 scale R2 0.9332322002402818 scale-shift -0.012198604727201906
+30 ctrl t80 3.27 resp 58% | working 16% t80 range [0.9877675840978594, 1.0152905198776758] | thr dSPN 0.004 iSPN 0.016 | moved 0 scale R2 None scale-shift None

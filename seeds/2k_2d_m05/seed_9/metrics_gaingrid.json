@@ -1,0 +1,39 @@
+{
+ "control": {
+  "y_pre": 0.2471596598625183,
+  "y_peak": 0.24661767482757568,
+  "rise": -0.000541985034942627,
+  "t80_s": 0.0,
+  "respond": 1.0,
+  "rt_median": 3.41
+ },
+ "frac_working": 0.0,
+ "t80_ratio_range_working": null,
+ "thr_dSPN_only": 0.001,
+ "thr_iSPN_only": 0.001,
+ "n_working_moved": 0,
+ "scale_minus_shift_r2_moved": null,
+ "scale_r2_moved_median": null,
+ "seed": 9,
+ "deltas": [
+  -0.25,
+  -0.128,
+  -0.064,
+  -0.032,
+  -0.016,
+  -0.008,
+  -0.004,
+  -0.002,
+  -0.001,
+  0.0,
+  0.001,
+  0.002,
+  0.004,
+  0.008,
+  0.016,
+  0.032,
+  0.064,
+  0.128,
+  0.25
+ ]
+}

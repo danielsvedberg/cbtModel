@@ -1,0 +1,10 @@
+1 ctrl t80 3.24 resp 94% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:partial
+2 ctrl t80 3.45 resp 91% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:no
+3 ctrl t80 2.98 resp 82% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:no
+4 ctrl t80 0.0 resp 98% diag/both:no ramp | diag/ctx:no ramp | diag/tau:no ramp | da/both:no ramp | da/ctx:no ramp | da/tau:no ramp
+5 ctrl t80 3.24 resp 35% diag/both:no ramp | diag/ctx:no ramp | diag/tau:no ramp | da/both:no ramp | da/ctx:no ramp | da/tau:no ramp
+6 ctrl t80 3.08 resp 99% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:no
+7 ctrl t80 3.01 resp 95% diag/both:no | diag/ctx:no | diag/tau:partial | da/both:no | da/ctx:no | da/tau:no
+8 ctrl t80 2.96 resp 87% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:no
+9 ctrl t80 0.0 resp 100% diag/both:no ramp | diag/ctx:no ramp | diag/tau:no ramp | da/both:no ramp | da/ctx:no ramp | da/tau:no ramp
+10 ctrl t80 3.16 resp 97% diag/both:no | diag/ctx:no | diag/tau:no | da/both:no | da/ctx:no | da/tau:no

@@ -1,0 +1,30 @@
+1 iSPN only: 12 cells, t80 0.99-1.03
+2 DA direction: 14 cells, t80 0.97-1.46
+3 same-sign diag: 13 cells, t80 0.92-1.19
+4 same-sign diag: 13 cells, t80 0.92-1.08
+5 iSPN only: 9 cells, t80 1.00-1.01
+6 same 1:2: 8 cells, t80 1.00-1.08
+7 same-sign diag: 15 cells, t80 0.87-1.06
+8 iSPN only: 10 cells, t80 0.97-1.01
+9 no ramp
+10 same 1:2: 7 cells, t80 0.95-1.09
+11 iSPN only: 14 cells, t80 0.77-1.05
+12 iSPN only: 12 cells, t80 0.96-1.02
+13 same 1:2: 5 cells, t80 0.98-1.02
+14 same-sign diag: 13 cells, t80 0.92-1.03
+15 same 1:2: 7 cells, t80 0.97-1.03
+16 iSPN only: 9 cells, t80 0.97-1.04
+17 iSPN only: 13 cells, t80 0.96-1.09
+18 dSPN only: 8 cells, t80 1.00-1.02
+19 same 1:3: 5 cells, t80 0.96-1.06
+20 no ramp
+21 DA 3:1: 4 cells, t80 0.84-1.02
+22 dSPN only: 11 cells, t80 0.95-1.10
+23 iSPN only: 12 cells, t80 0.70-1.07
+24 same-sign diag: 11 cells, t80 0.96-1.04
+25 same 1:2: 6 cells, t80 0.99-1.06
+26 DA 1:2: 7 cells, t80 0.70-1.04
+27 DA direction: 12 cells, t80 1.00-1.11
+28 no ramp
+29 iSPN only: 11 cells, t80 0.97-1.12
+30 iSPN only: 9 cells, t80 0.99-1.02

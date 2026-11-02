@@ -1,0 +1,114 @@
+{
+ "verify_max_abs_diff": 0.0,
+ "rec_gain_sign": 0,
+ "bg_tau_gain": true,
+ "control": {
+  "y_pre": 0.24379657208919525,
+  "y_peak": 0.5462462902069092,
+  "rise": 0.30244971811771393,
+  "t80_s": 3.12
+ },
+ "rows": [
+  {
+   "strength": -1.0,
+   "t80_s": NaN,
+   "t80_ratio": NaN,
+   "respond_ctrl": 0.788,
+   "respond_pert": 0.0,
+   "n_both": 0,
+   "rt_ratio_median": null
+  },
+  {
+   "strength": -0.5,
+   "t80_s": NaN,
+   "t80_ratio": NaN,
+   "respond_ctrl": 0.788,
+   "respond_pert": 0.0,
+   "n_both": 0,
+   "rt_ratio_median": null
+  },
+  {
+   "strength": -0.25,
+   "t80_s": NaN,
+   "t80_ratio": NaN,
+   "respond_ctrl": 0.788,
+   "respond_pert": 0.0,
+   "n_both": 0,
+   "rt_ratio_median": null
+  },
+  {
+   "strength": 0.0,
+   "t80_s": 3.12,
+   "t80_ratio": 1.0,
+   "respond_ctrl": 0.788,
+   "respond_pert": 0.788,
+   "n_both": 394,
+   "rt_ratio_median": 1.0
+  },
+  {
+   "strength": 0.25,
+   "t80_s": 2.31,
+   "t80_ratio": 0.7403846153846154,
+   "warp": {
+    "shift": {
+     "r2": 0.7549220902369974,
+     "alpha": 1.0,
+     "shift_steps": -5.0
+    },
+    "scale": {
+     "r2": 0.921145395018906,
+     "alpha": 0.81,
+     "shift_steps": 0.0
+    }
+   },
+   "respond_ctrl": 0.788,
+   "respond_pert": 1.0,
+   "n_both": 394,
+   "rt_ratio_median": 0.7329284700591628
+  },
+  {
+   "strength": 0.5,
+   "t80_s": 1.89,
+   "t80_ratio": 0.6057692307692307,
+   "warp": {
+    "shift": {
+     "r2": 0.46495695520923463,
+     "alpha": 1.0,
+     "shift_steps": -40.0
+    },
+    "scale": {
+     "r2": 0.8077790835742931,
+     "alpha": 0.69,
+     "shift_steps": 0.0
+    }
+   },
+   "respond_ctrl": 0.788,
+   "respond_pert": 1.0,
+   "n_both": 394,
+   "rt_ratio_median": 0.599715909090909
+  },
+  {
+   "strength": 1.0,
+   "t80_s": 1.43,
+   "t80_ratio": 0.4583333333333333,
+   "warp": {
+    "shift": {
+     "r2": 0.16190055584849405,
+     "alpha": 1.0,
+     "shift_steps": -80.0
+    },
+    "scale": {
+     "r2": 0.58636416556119,
+     "alpha": 0.55,
+     "shift_steps": 0.0
+    }
+   },
+   "respond_ctrl": 0.788,
+   "respond_pert": 1.0,
+   "n_both": 394,
+   "rt_ratio_median": 0.4543913713405239
+  }
+ ],
+ "verdict": "partial",
+ "seed": 24
+}

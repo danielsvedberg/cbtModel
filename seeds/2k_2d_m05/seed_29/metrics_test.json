@@ -1,0 +1,48 @@
+{
+ "seed": 29,
+ "respond": 0.9933333333333333,
+ "on_time_2p5_3p5": 0.3433333333333333,
+ "rt_median": 3.629999876022339,
+ "rt_iqr": [
+  3.429999828338623,
+  3.8899998664855957
+ ],
+ "D1": {
+  "modulation": 0.24477584660053253,
+  "frac_units_modulated": 1.0,
+  "ramp_onset_vs_rt_r": 0.9651083312591419,
+  "ramp_onset_vs_rt_slope": 1.0202775340795998,
+  "ramp_lead_median_s": 0.9299998760223389
+ },
+ "D2": {
+  "modulation": 0.08416084200143814,
+  "frac_units_modulated": 0.6,
+  "ramp_onset_vs_rt_r": -0.27325311245843215,
+  "ramp_onset_vs_rt_slope": -0.7746935255042242,
+  "ramp_lead_median_s": 0.26499990940093987
+ },
+ "Cortex": {
+  "modulation": 0.21659278869628906,
+  "frac_units_modulated": 0.9,
+  "ramp_onset_vs_rt_r": 0.7558823292353285,
+  "ramp_onset_vs_rt_slope": 0.8921866156806963,
+  "ramp_lead_median_s": 0.6799999523162841
+ },
+ "Thalamus": {
+  "modulation": 0.21787284314632416,
+  "frac_units_modulated": 0.7,
+  "ramp_onset_vs_rt_r": 0.9720254181207316,
+  "ramp_onset_vs_rt_slope": 0.9971056889141579,
+  "ramp_lead_median_s": 0.7399998807907104
+ },
+ "SNc": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "plots_skipped": {
+  "plot_d1d2ratio_SNc_correlogram": "ValueError('Cannot calculate a linear regression if all x values are identical')"
+ }
+}

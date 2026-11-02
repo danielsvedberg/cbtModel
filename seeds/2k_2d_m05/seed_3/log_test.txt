@@ -1,0 +1,67 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:213: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:233: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+6.970686004191741e-08
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:992: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+plot_d1d2ratio_SNc_correlogram skipped: ValueError('Cannot calculate a linear regression if all x values are identical')
+0.344
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:948: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Shape of binned_xs: [(20, 600, 20), (20, 600, 20), (20, 600, 20)]
+Shape of binned_ys: [(20, 600, 1), (30, 600, 1), (89, 600, 1), (88, 600, 1), (101, 600, 1), (93, 600, 1), (69, 600, 1), (51, 600, 1), (36, 600, 1), (8, 600, 1)]
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:519: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+{
+ "seed": 3,
+ "respond": 0.9983333333333333,
+ "on_time_2p5_3p5": 0.0033333333333333335,
+ "rt_median": 4.059999942779541,
+ "rt_iqr": [
+  3.9099998474121094,
+  4.230000019073486
+ ],
+ "D1": {
+  "modulation": 0.14196926355361938,
+  "frac_units_modulated": 0.9,
+  "ramp_onset_vs_rt_r": 0.1874902227473407,
+  "ramp_onset_vs_rt_slope": 0.4286470055341278,
+  "ramp_lead_median_s": 1.1199998378753664
+ },
+ "D2": {
+  "modulation": 0.06351986527442932,
+  "frac_units_modulated": 1.0,
+  "ramp_onset_vs_rt_r": 0.258317780186569,
+  "ramp_onset_vs_rt_slope": 0.23945726679554752,
+  "ramp_lead_median_s": 2.9700000286102295
+ },
+ "Cortex": {
+  "modulation": 0.1385188102722168,
+  "frac_units_modulated": 0.75,
+  "ramp_onset_vs_rt_r": 0.15300836727027728,
+  "ramp_onset_vs_rt_slope": 0.6564090355402185,
+  "ramp_lead_median_s": 0.8099998664855956
+ },
+ "Thalamus": {
+  "modulation": 0.17274565994739532,
+  "frac_units_modulated": 0.85,
+  "ramp_onset_vs_rt_r": 0.7161846446692237,
+  "ramp_onset_vs_rt_slope": 0.7426250931921259,
+  "ramp_lead_median_s": 0.7399997997283934
+ },
+ "SNc": {
+  "modulation": 0.0,
+  "frac_units_modulated": 0.0,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": null
+ },
+ "plots_skipped": {
+  "plot_d1d2ratio_SNc_correlogram": "ValueError('Cannot calculate a linear regression if all x values are identical')"
+ }
+}

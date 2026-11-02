@@ -1,0 +1,10 @@
+1 same-sign diag: 10 cells, t80 0.97-1.02
+2 same-sign diag: 13 cells, t80 0.73-1.02
+3 DA 2:1: 6 cells, t80 1.00-1.09
+4 no ramp
+5 same 1:2: 8 cells, t80 0.94-1.02
+6 same-sign diag: 13 cells, t80 0.96-1.07
+7 iSPN only: 12 cells, t80 0.88-1.02
+8 same-sign diag: 8 cells, t80 0.95-1.03
+9 no ramp
+10 iSPN only: 14 cells, t80 0.88-1.09

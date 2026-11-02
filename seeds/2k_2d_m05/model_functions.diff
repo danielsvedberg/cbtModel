@@ -1,0 +1,197 @@
+diff --git a/model_functions.py b/model_functions.py
+index eb2d1ef..7dab649 100644
+--- a/model_functions.py
++++ b/model_functions.py
+@@ -19,6 +19,16 @@ def inh(w):
+     #return -jnp.maximum(0, w)
+ 
+ 
++def nm_bias(c):
++    # DA bias, constrained to (-0.5, 0) (as in cbtModel1D)
++    return -0.5 * jax.nn.sigmoid(c)
++
++
++def da_signals(m, c, x_nm):
++    # rank-2 DA readout: s[0] drives dSPN rows, s[1] drives iSPN rows. m: (2, n_nm), c: (2,)
++    return jax.nn.tanh(exc(m) @ nln(x_nm) + nm_bias(c))
++
++
+ def nln(x):
+     # return jax.nn.tanh(x)
+     return jnp.maximum(0, jax.nn.tanh(x))
+@@ -91,14 +101,6 @@ def multiregion_nmrnn(
+     tau_t = tau_x
+     tau_nm = tau_z
+ 
+-    # Optional DA-trace hyperparameters (safe defaults for backward compatibility).
+-    tau_d1_rise = params.get('tau_d1_rise', 10.0)
+-    tau_d1_fall = params.get('tau_d1_fall', 15000.0)
+-    tau_d2_rise = params.get('tau_d2_rise', 20.0)
+-    tau_d2_fall = params.get('tau_d2_fall', 15000.0)
+-    gain_e_d1 = params.get('gain_e_d1', 1.0)
+-    gain_e_d2 = params.get('gain_e_d2', 1.0)
+-
+     num_bg_cells = J_bg.shape[0]
+     num_c_cells = J_c.shape[0]
+     n_d1_cells = num_bg_cells // 2
+@@ -109,13 +111,8 @@ def multiregion_nmrnn(
+         opto_stimulation = jnp.zeros((T, num_bg_cells))
+     inputs_and_stim = (inputs, opto_stimulation)
+ 
+-    # Initialize DA-derived excitability traces from initial NM state.
+-    da0 = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm0) + c))[0]
+-    e_d10 = da0
+-    e_d20 = 1.0 - da0
+-
+     def _step(x_and_z, u_and_stim, step_rng_key):
+-        x_bg, x_c, x_t, x_nm, e_d1, e_d2 = x_and_z
++        x_bg, x_c, x_t, x_nm = x_and_z
+         u, stim = u_and_stim  # see inputs and stim var
+ 
+         # Add noise to the states
+@@ -133,36 +130,33 @@ def multiregion_nmrnn(
+         x_c += (1. / tau_c) * exc(B_ct) @ nln(x_t)  # input from thalamus, excitatory
+ 
+         if modulation:
+-            U = jnp.concatenate((jnp.ones((n_d1_cells, 1)), jnp.ones((n_d2_cells, 1)) * -1))  # direct/indirect
+-
+-            V_bg = jnp.ones((num_bg_cells, 1))
++            # rank-2 DA gain: two DA channels s = (s_d1, s_d2) read out from SNc; dSPN rows get +s_d1, iSPN rows -s_d2,
++            # so DA raises dSPN and lowers iSPN excitability with independent magnitudes
++            U = jnp.zeros((num_bg_cells, 2)).at[:n_d1_cells, 0].set(1.0).at[n_d1_cells:, 1].set(-1.0)
+             V_c = jnp.ones((num_c_cells, 1))
+ 
+-            s = jnp.ravel(jax.nn.sigmoid(exc(m) @ nln(x_nm) + c))[0]  # scalar DA-like NM signal
++            s = da_signals(m, c, x_nm)  # (2,) DA-like NM signals
++            l_bg = U @ s  # per-SPN log-gain, num_bg_cells
+ 
+-            # dSPN: fast up with DA rise, slow down with DA fall.
+-            # iSPN: fast up when DA falls (target = 1-DA), slow down when DA rises.
+-            e_d1 = _asymmetric_trace_update(e_d1, s, tau_d1_rise, tau_d1_fall)
+-            e_d2 = _asymmetric_trace_update(e_d2, 1.0 - s, tau_d2_rise, tau_d2_fall)
+-            e_d1 = jnp.clip(e_d1, 0.0, 1.0)
+-            e_d2 = jnp.clip(e_d2, 0.0, 1.0)
++            G_bg_e = jnp.exp(l_bg[:, None] @ V_c.T)  # gain of cortical input to BG, num_bg_cells x num_c_cells
++            g_bg_tau = jnp.exp(l_bg)  # per-SPN multiplier on BG decay tau, num_bg_cells
+ 
+-            s_for_gain = s
+-            G_bg = jnp.exp(s_for_gain * U @ V_bg.T)
+-            G_c = jnp.exp(s_for_gain * U @ V_c.T)  # gain of cortical input to BG num_bg_cells x num_c_cells
+-
+-            pop_gain = jnp.concatenate((
+-                jnp.ones((n_d1_cells,)) * (1.0 + gain_e_d1 * e_d1),
+-                jnp.ones((n_d2_cells,)) * (1.0 + gain_e_d2 * e_d2),
+-            ))
+         else:
+-            G_bg = jnp.ones((num_bg_cells, num_bg_cells))
+-            G_c = jnp.ones((num_bg_cells, num_c_cells))
+-            pop_gain = jnp.ones((num_bg_cells,))
+-
+-        bg_rec = (G_bg * inh(J_bg)) @ nln(x_bg)
+-        bg_ctx = (G_c * exc(B_bgc)) @ nln(x_c)
+-        x_bg = (1.0 - (1. / tau_bg)) * x_bg + (1. / tau_bg) * pop_gain * (bg_rec + bg_ctx)
++            G_bg_e = jnp.ones((num_bg_cells, num_c_cells))
++            g_bg_tau = jnp.ones(num_bg_cells)
++
++        # Fixed-gain switch for tests (seeds/gain_sweep_2d.py), keys as in cbtModel_nonm: params['fixed_gain_ctx']
++        # replaces the DA-driven cortex->BG gain G_bg_e, params['fixed_gain_tau'] the BG decay-tau gain g_bg_tau, each
++        # a scalar or per-SPN (num_bg_cells,) gain (e.g. dSPN = g, iSPN = 1/g). A key that is absent leaves that gain
++        # DA-driven, so training and the default tests run exactly as before; SNc keeps running either way.
++        if 'fixed_gain_ctx' in params:
++            G_bg_e = (jnp.ones(num_bg_cells) * params['fixed_gain_ctx'])[:, None] * jnp.ones((num_bg_cells, num_c_cells))
++        if 'fixed_gain_tau' in params:
++            g_bg_tau = jnp.ones(num_bg_cells) * params['fixed_gain_tau']
++
++        bg_rec = (inh(J_bg)) @ nln(x_bg)
++        bg_ctx = (G_bg_e * exc(B_bgc)) @ nln(x_c)
++        x_bg = (1.0 - (1. / (tau_bg*g_bg_tau))) * x_bg + (1. / tau_bg) * (bg_rec + bg_ctx)
+         x_bg += (1. / tau_bg) * stim  # simulate stimulation
+ 
+         # update x_nm
+@@ -183,14 +177,14 @@ def multiregion_nmrnn(
+ 
+         y = exc(C) @ nln(x_t) + rb  # output from Thalamus
+         #rb should probably be constrained to always be positive because otherwise you can get weird bistability stuff
+-        return (x_bg, x_c, x_t, x_nm, e_d1, e_d2), (y, x_bg, x_c, x_t, x_nm)
++        return (x_bg, x_c, x_t, x_nm), (y, x_bg, x_c, x_t, x_nm)
+ 
+     # Generate random keys for each time step
+     step_keys = jr.split(step_key, T)
+ 
+     _, (y, xbg, xc, xt, xnm) = lax.scan(
+         lambda x_and_z, u_and_stim_rng: _step(x_and_z, u_and_stim_rng[:2], u_and_stim_rng[2]),
+-        (x_bg0, x_c0, x_t0, x_nm0, e_d10, e_d20),
++        (x_bg0, x_c0, x_t0, x_nm0),
+         (inputs_and_stim[0], inputs_and_stim[1], step_keys),
+         #map to u_and_stim_rng[0] and u_and_stim_rng[1] respectively
+     )
+@@ -260,14 +254,18 @@ def fit_nm_rnn(inputs, targets, loss_masks, params, optimizer, x0, z0, num_iters
+     best_params = params
+ 
+     for n in range(num_iters // log_interval):
+-        (params, _), (_, loss_values) = lax.scan(
++        start_params = params
++        (params, _), (param_hist, loss_values) = lax.scan(
+             _step, (params, opt_state), None, length=log_interval
+         )
+         losses.append(loss_values)
+         print(f'step {(n + 1) * log_interval}, loss: {loss_values[-1]}')
+-        if loss_values[-1] < best_loss:
+-            best_params = params
+-            best_loss = loss_values[-1]
++        # best over every step, not just the chunk end (as in cbtModel1D): loss_values[i] is the loss of the params
++        # going into update i, i.e. start_params for i = 0 and param_hist[i - 1] after that
++        i = int(jnp.argmin(loss_values))
++        if loss_values[i] < best_loss:
++            best_params = start_params if i == 0 else jax.tree_util.tree_map(lambda a: a[i - 1], param_hist)
++            best_loss = loss_values[i]
+ 
+     return best_params, losses
+ 
+@@ -422,6 +420,36 @@ def simulate_opto(params_nm):
+     return all_ys_list, all_xs_list, all_zs_list
+ 
+ 
++def get_bg_gain(params_nm, all_zs, noise=True):
++    """
++    Reconstruct the SPN gains of test_model trials from SNc states: the rank-2 DA gains G_d1 = exp(+s_d1) and
++    G_d2 = exp(-s_d2), with s = da_signals(m, c, x_nm). multiregion_nmrnn does not return them; this replays its
++    noise draws (same keys as test_model), so it matches the simulation exactly. all_zs: (n_seeds, n_conditions, T, n_nm).
++    Returns G_d1, G_d2, pop_gain_d1, pop_gain_d2, each (n_seeds, n_conditions, T); the excitability traces were removed
++    from the model, so the pop gains are ones (kept for plot_binned_responses' four-panel layout).
++    """
++    n = cs.test_noise_std if noise else 0
++    tau_z = cs.config['tau_z']
++    m, c = params_nm['m'], params_nm['c']
++
++    def _single(zs, rng_key):  # zs: T x n_nm
++        _, init_key, step_key = jr.split(rng_key, 3)
++        x_nm0 = cs.z0 + n * jr.normal(init_key, cs.z0.shape) if n > 0 else cs.z0
++        step_keys = jr.split(step_key, zs.shape[0])
++        x_prev = jnp.concatenate((x_nm0[None], zs[:-1]))  # x_nm entering each step
++        if n > 0:
++            x_prev = x_prev + n / math.sqrt(2 * tau_z) * vmap(lambda k: jr.normal(k, cs.z0.shape))(step_keys)
++        s = vmap(lambda x: da_signals(m, c, x))(x_prev)  # T x 2
++        ones = jnp.ones(s.shape[0])
++        return jnp.exp(s[:, 0]), jnp.exp(-s[:, 1]), ones, ones
++
++    out = []
++    for seed in range(all_zs.shape[0]):
++        keys = jr.split(jr.PRNGKey(seed), all_zs.shape[1])
++        out.append(vmap(_single)(all_zs[seed], keys))
++    return tuple(jnp.stack(g) for g in zip(*out))
++
++
+ def get_brain_area_(brain_area, xs=None, zs=None):
+     if brain_area == 'BG' or brain_area == 'Striatum':
+         return jnp.concatenate((get_brain_area('D1', xs, zs), get_brain_area('D2', xs, zs)), axis=0)
+@@ -450,7 +478,8 @@ def get_brain_area_(brain_area, xs=None, zs=None):
+         else:
+             raise ValueError('Invalid D2 dims')
+     elif brain_area == 'nm':
+-        return jax.nn.sigmoid(nln(zs) @ exc(cs.params['m'].T) + cs.params['c'])
++        # (..., 2) DA signals (s_d1, s_d2), batched form of da_signals; NB uses cs.params (the untrained init), as before
++        return jax.nn.tanh(nln(zs) @ exc(cs.params['m']).T + nm_bias(cs.params['c']))
+     else:
+         raise ValueError('Invalid brain area')
+ 

@@ -1,0 +1,131 @@
+{
+ "seed": 46,
+ "inh dMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.018,
+   "rt_median": 3.1449999809265137
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.018,
+   "rt_median": 5.385000228881836
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.002,
+   "rt_median": 6.199999809265137
+  },
+  {
+   "strength": -0.9000000357627869,
+   "respond": 0.001,
+   "rt_median": 6.230000019073486
+  },
+  {
+   "strength": -1.2000000476837158,
+   "respond": 0.001,
+   "rt_median": 6.239999771118164
+  },
+  {
+   "strength": -1.5,
+   "respond": 0.0,
+   "rt_median": null
+  }
+ ],
+ "inh iMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.018,
+   "rt_median": 3.1449999809265137
+  },
+  {
+   "strength": -0.15000000596046448,
+   "respond": 0.139,
+   "rt_median": 2.369999885559082
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.013,
+   "rt_median": 2.069999933242798
+  },
+  {
+   "strength": -0.45000001788139343,
+   "respond": 0.008,
+   "rt_median": 6.085000038146973
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.01,
+   "rt_median": 6.300000190734863
+  },
+  {
+   "strength": -0.75,
+   "respond": 0.0,
+   "rt_median": null
+  }
+ ],
+ "stim dMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.018,
+   "rt_median": 3.1449999809265137
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.001,
+   "rt_median": 6.150000095367432
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.001,
+   "rt_median": 6.159999847412109
+  },
+  {
+   "strength": 0.9000000357627869,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 1.2000000476837158,
+   "respond": 0.787,
+   "rt_median": 2.309999942779541
+  },
+  {
+   "strength": 1.5,
+   "respond": 0.665,
+   "rt_median": 1.7599999904632568
+  }
+ ],
+ "stim iMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.018,
+   "rt_median": 3.1449999809265137
+  },
+  {
+   "strength": 0.15000000596046448,
+   "respond": 0.015,
+   "rt_median": 4.819999694824219
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.004,
+   "rt_median": 6.3949995040893555
+  },
+  {
+   "strength": 0.45000001788139343,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 0.75,
+   "respond": 0.0,
+   "rt_median": null
+  }
+ ]
+}

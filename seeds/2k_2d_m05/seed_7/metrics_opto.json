@@ -1,0 +1,131 @@
+{
+ "seed": 7,
+ "inh dMSN": [
+  {
+   "strength": -0.0,
+   "respond": 1.0,
+   "rt_median": 3.1399998664855957
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.98,
+   "rt_median": 3.3999998569488525
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": -0.9000000357627869,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": -1.2000000476837158,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": -1.5,
+   "respond": 0.0,
+   "rt_median": null
+  }
+ ],
+ "inh iMSN": [
+  {
+   "strength": -0.0,
+   "respond": 1.0,
+   "rt_median": 3.1399998664855957
+  },
+  {
+   "strength": -0.15000000596046448,
+   "respond": 1.0,
+   "rt_median": 2.819999933242798
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 2.569999933242798
+  },
+  {
+   "strength": -0.45000001788139343,
+   "respond": 1.0,
+   "rt_median": 2.3499999046325684
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 2.1599998474121094
+  },
+  {
+   "strength": -0.75,
+   "respond": 1.0,
+   "rt_median": 1.9799998998641968
+  }
+ ],
+ "stim dMSN": [
+  {
+   "strength": 0.0,
+   "respond": 1.0,
+   "rt_median": 3.1399998664855957
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.004,
+   "rt_median": 4.710000038146973
+  },
+  {
+   "strength": 0.9000000357627869,
+   "respond": 0.17,
+   "rt_median": 4.880000114440918
+  },
+  {
+   "strength": 1.2000000476837158,
+   "respond": 1.0,
+   "rt_median": 2.25
+  },
+  {
+   "strength": 1.5,
+   "respond": 1.0,
+   "rt_median": 1.6100000143051147
+  }
+ ],
+ "stim iMSN": [
+  {
+   "strength": 0.0,
+   "respond": 1.0,
+   "rt_median": 3.1399998664855957
+  },
+  {
+   "strength": 0.15000000596046448,
+   "respond": 1.0,
+   "rt_median": 3.5199999809265137
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.129,
+   "rt_median": 4.139999866485596
+  },
+  {
+   "strength": 0.45000001788139343,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.0,
+   "rt_median": null
+  },
+  {
+   "strength": 0.75,
+   "respond": 0.0,
+   "rt_median": null
+  }
+ ]
+}

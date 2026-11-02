@@ -273,7 +273,8 @@ def bin_normal_data(x, target_bins=10, min_per_bin=3,
     return bin_idx, edges, None
 
 
-def plot_binned_responses(all_ys, all_xs, all_zs):
+def plot_binned_responses(all_ys, all_xs, all_zs, bg_gain=None):
+    # bg_gain: optional (G_d1, G_d2, pop_gain_d1, pop_gain_d2), each (n_seeds, n_conditions, T), from mf.get_bg_gain; adds four panels
     cue_start_t = 0
     cue_end_t = (cue_start_t + cs.config['T_cue']) / 100
     beh_start_t = cs.config['T_wait'] / 100
@@ -313,6 +314,7 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
     binned_xs = [[[] for n in range(3)] for _ in bin_labels]
     binned_ys = [[] for _ in bin_labels]
     binned_zs = [[] for _ in bin_labels]
+    binned_gs = [[[] for n in range(4)] for _ in bin_labels]
     binned_response_times = [[] for _ in bin_labels]
 
     # Assign each trial to a bin based on its response time
@@ -322,6 +324,8 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
         aligned_xs = [mf.align_to_cue(all_x[seed_idx], cs.test_start_t, new_T=500) for all_x in all_xs]
         aligned_zs = mf.align_to_cue(all_zs[seed_idx], cs.test_start_t, new_T=500)
         aligned_ys = mf.align_to_cue(all_ys[seed_idx], cs.test_start_t, bsln_sub=False, new_T=500)
+        if bg_gain is not None:
+            aligned_gs = [mf.align_to_cue(g[seed_idx], cs.test_start_t, new_T=500) for g in bg_gain]
 
         for condition_idx in range(n_conditions):  #for all cue start times
             response_time = response_times[seed_idx, condition_idx]
@@ -333,6 +337,9 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
                         binned_xs[bin_idx][i].append(aligned_xs[i][condition_idx])
                     binned_ys[bin_idx].append(aligned_ys[condition_idx])
                     binned_zs[bin_idx].append(aligned_zs[condition_idx])
+                    if bg_gain is not None:
+                        for i in range(4):
+                            binned_gs[bin_idx][i].append(aligned_gs[i][condition_idx])
                     binned_response_times[bin_idx].append(response_time)
                     break
 
@@ -390,6 +397,10 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
     # Define the brain areas to plot
     brain_areas = ['D1', 'D2', 'Cortex', 'Thalamus', 'SNc']  #, 'nm']
     brain_area_names = ['dSPN', 'iSPN', 'Cortex', 'Thalamus', 'SNc']  #, 'NM']
+    if bg_gain is not None:
+        gain_names = ['G_d1', 'G_d2', 'pop_d1', 'pop_d2']
+        brain_areas = brain_areas + gain_names
+        brain_area_names = brain_area_names + ['dSPN\nG_bg', 'iSPN\nG_bg', 'dSPN\npop_gain', 'iSPN\npop_gain']
     cmap = plt.cm.get_cmap('turbo')
     norm = matplotlib.colors.Normalize(vmin=0, vmax=len(bin_labels) - 1)
     # Loop through each brain area
@@ -397,7 +408,7 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
     fig, axs = plt.subplots(
         len(brain_areas),
         1,
-        figsize=(1.8, 4), sharex=True)
+        figsize=(1.8, 0.8 * len(brain_areas)), sharex=True)
     n_brain_areas = len(brain_areas)
     for idx, name in enumerate(brain_areas):
         ax = axs[idx]
@@ -407,11 +418,14 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
             xs_bin = binned_xs[bin_idx]  # tuple of n_trials * T * n_neurons
             zs_bin = binned_zs[bin_idx]
 
-            # Get the brain area activity (aligning to the cue)
-            area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin, bsln_sub=False, as_rate=True)  # trials * T * N
+            if bg_gain is not None and name in gain_names:  # one gain per trial, trials * T
+                mean_area_activity = jnp.array(binned_gs[bin_idx][gain_names.index(name)])
+            else:
+                # Get the brain area activity (aligning to the cue)
+                area_activity = mf.get_brain_area(name, xs=xs_bin, zs=zs_bin, bsln_sub=False, as_rate=True)  # trials * T * N
 
-            # Compute mean and SEM for the current bin
-            mean_area_activity = jnp.mean(area_activity, axis=-1)  # trials * T
+                # Compute mean and SEM for the current bin
+                mean_area_activity = jnp.mean(area_activity, axis=-1)  # trials * T
 
             # Plot each bin with mean ± SEM
             mean_act, sem_act = mf.compute_mean_sem(mean_area_activity)  # T
@@ -435,7 +449,7 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
         # create a second axis on left, label it with the brain area
         ax2 = ax.twinx()
         nm = brain_area_names[idx]
-        ax2.set_ylabel(f'{nm}', rotation=270, labelpad=10)
+        ax2.set_ylabel(f'{nm}', rotation=270, labelpad=10 if '\n' not in nm else 20)
         # get rid of ticks and labels for the second axis
         ax2.set_yticks([])
         # Add vertical lines for cue, wait, and movement phases
@@ -444,8 +458,9 @@ def plot_binned_responses(all_ys, all_xs, all_zs):
         ax.axvspan(beh_start_t, x_axis[-1], color='green', alpha=0.2)
 
         if name == 'SNc':
-            ax.set_xlabel('time after cue (s)')
             ax.set_ylabel('activity (AU)')
+        if idx == n_brain_areas - 1:
+            ax.set_xlabel('time after cue (s)')
     axs[0].set_title('Binned by response time')
     
     plt.tight_layout() # tight layout would mess up custom cbar ax

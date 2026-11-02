@@ -1,0 +1,241 @@
+-0.0
+-0.3
+-0.6
+-0.90000004
+-1.2
+-1.5
+-0.0
+-0.15
+-0.3
+-0.45000002
+-0.6
+-0.75
+0.0
+0.3
+0.6
+0.90000004
+1.2
+1.5
+0.0
+0.15
+0.3
+0.45000002
+0.6
+0.75
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:766: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+inh dMSN
+[Array(-0., dtype=float32), Array(-0.3, dtype=float32), Array(-0.6, dtype=float32), Array(-0.90000004, dtype=float32), Array(-1.2, dtype=float32), Array(-1.5, dtype=float32)]
+-0.0
+-0.3
+-0.6
+-0.90000004
+-1.2
+-1.5
+-0.0
+-0.3
+-0.6
+-0.90000004
+-1.2
+-1.5
+-0.0
+-0.3
+-0.6
+-0.90000004
+-1.2
+-1.5
+inh iMSN
+[Array(-0., dtype=float32), Array(-0.15, dtype=float32), Array(-0.3, dtype=float32), Array(-0.45000002, dtype=float32), Array(-0.6, dtype=float32), Array(-0.75, dtype=float32)]
+-0.0
+-0.15
+-0.3
+-0.45000002
+-0.6
+-0.75
+-0.0
+-0.15
+-0.3
+-0.45000002
+-0.6
+-0.75
+-0.0
+-0.15
+-0.3
+-0.45000002
+-0.6
+-0.75
+stim dMSN
+[Array(0., dtype=float32), Array(0.3, dtype=float32), Array(0.6, dtype=float32), Array(0.90000004, dtype=float32), Array(1.2, dtype=float32), Array(1.5, dtype=float32)]
+0.0
+0.3
+0.6
+0.90000004
+1.2
+1.5
+0.0
+0.3
+0.6
+0.90000004
+1.2
+1.5
+0.0
+0.3
+0.6
+0.90000004
+1.2
+1.5
+stim iMSN
+[Array(0., dtype=float32), Array(0.15, dtype=float32), Array(0.3, dtype=float32), Array(0.45000002, dtype=float32), Array(0.6, dtype=float32), Array(0.75, dtype=float32)]
+0.0
+0.15
+0.3
+0.45000002
+0.6
+0.75
+0.0
+0.15
+0.3
+0.45000002
+0.6
+0.75
+0.0
+0.15
+0.3
+0.45000002
+0.6
+0.75
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:824: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:833: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+{
+ "seed": 5,
+ "inh dMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.372,
+   "rt_median": 3.2200000286102295
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 0.013,
+   "rt_median": 4.110000133514404
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 0.01,
+   "rt_median": 4.135000228881836
+  },
+  {
+   "strength": -0.9000000357627869,
+   "respond": 0.011,
+   "rt_median": 4.199999809265137
+  },
+  {
+   "strength": -1.2000000476837158,
+   "respond": 0.01,
+   "rt_median": 4.345000267028809
+  },
+  {
+   "strength": -1.5,
+   "respond": 0.009,
+   "rt_median": 4.549999713897705
+  }
+ ],
+ "inh iMSN": [
+  {
+   "strength": -0.0,
+   "respond": 0.372,
+   "rt_median": 3.2200000286102295
+  },
+  {
+   "strength": -0.15000000596046448,
+   "respond": 1.0,
+   "rt_median": 2.240000009536743
+  },
+  {
+   "strength": -0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 1.8299999237060547
+  },
+  {
+   "strength": -0.45000001788139343,
+   "respond": 1.0,
+   "rt_median": 1.6299999952316284
+  },
+  {
+   "strength": -0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 1.5299999713897705
+  },
+  {
+   "strength": -0.75,
+   "respond": 1.0,
+   "rt_median": 1.46999990940094
+  }
+ ],
+ "stim dMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.372,
+   "rt_median": 3.2200000286102295
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 1.0,
+   "rt_median": 1.899999976158142
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 1.0,
+   "rt_median": 1.5299999713897705
+  },
+  {
+   "strength": 0.9000000357627869,
+   "respond": 1.0,
+   "rt_median": 1.3799999952316284
+  },
+  {
+   "strength": 1.2000000476837158,
+   "respond": 1.0,
+   "rt_median": 1.2999999523162842
+  },
+  {
+   "strength": 1.5,
+   "respond": 1.0,
+   "rt_median": 1.2599999904632568
+  }
+ ],
+ "stim iMSN": [
+  {
+   "strength": 0.0,
+   "respond": 0.372,
+   "rt_median": 3.2200000286102295
+  },
+  {
+   "strength": 0.15000000596046448,
+   "respond": 0.014,
+   "rt_median": 4.089999675750732
+  },
+  {
+   "strength": 0.30000001192092896,
+   "respond": 0.009,
+   "rt_median": 4.150000095367432
+  },
+  {
+   "strength": 0.45000001788139343,
+   "respond": 0.009,
+   "rt_median": 4.559999942779541
+  },
+  {
+   "strength": 0.6000000238418579,
+   "respond": 0.007,
+   "rt_median": 4.569999694824219
+  },
+  {
+   "strength": 0.75,
+   "respond": 0.007,
+   "rt_median": 4.610000133514404
+  }
+ ]
+}

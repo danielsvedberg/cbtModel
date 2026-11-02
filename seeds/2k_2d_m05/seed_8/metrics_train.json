@@ -1,0 +1,8 @@
+{
+ "seed": 8,
+ "best_logged_loss": 0.007746933959424496,
+ "best_step": 377,
+ "selection": "every step",
+ "final_logged_loss": 0.013363901525735855,
+ "frac_steps_below_0p010": 0.0215
+}

@@ -1,0 +1,67 @@
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:54: UserWarning: No artists with labels found to put in legend.  Note that artists whose label start with an underscore are ignored when legend() is called with no argument.
+  plt.legend()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:90: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:213: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:233: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+1.1195564228617423e-81
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:992: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+1.127865474530602e-205
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:894: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+2.5878889184081075e-151
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:948: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+Shape of binned_xs: [(9, 600, 20), (9, 600, 20), (9, 600, 20)]
+Shape of binned_ys: [(9, 600, 1), (19, 600, 1), (37, 600, 1), (27, 600, 1), (76, 600, 1), (76, 600, 1), (60, 600, 1), (68, 600, 1), (23, 600, 1), (11, 600, 1)]
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:519: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+{
+ "seed": 16,
+ "respond": 0.6916666666666667,
+ "on_time_2p5_3p5": 0.6016666666666667,
+ "rt_median": 3.049999952316284,
+ "rt_iqr": [
+  2.8299999237060547,
+  3.2799999713897705
+ ],
+ "D1": {
+  "modulation": 0.1874818354845047,
+  "frac_units_modulated": 0.9,
+  "ramp_onset_vs_rt_r": 0.3856841641940886,
+  "ramp_onset_vs_rt_slope": 0.10277394923752649,
+  "ramp_lead_median_s": 1.7699999618530273
+ },
+ "D2": {
+  "modulation": 0.22487083077430725,
+  "frac_units_modulated": 0.9,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 2.049999952316284
+ },
+ "Cortex": {
+  "modulation": 0.18948788940906525,
+  "frac_units_modulated": 0.95,
+  "ramp_onset_vs_rt_r": null,
+  "ramp_onset_vs_rt_slope": null,
+  "ramp_lead_median_s": 2.049999952316284
+ },
+ "Thalamus": {
+  "modulation": 0.07438138127326965,
+  "frac_units_modulated": 0.3,
+  "ramp_onset_vs_rt_r": 0.8861816425147417,
+  "ramp_onset_vs_rt_slope": 0.7831441644809948,
+  "ramp_lead_median_s": 0.999999876022339
+ },
+ "SNc": {
+  "modulation": 0.2217915803194046,
+  "frac_units_modulated": 0.4,
+  "ramp_onset_vs_rt_r": 0.6449344350283825,
+  "ramp_onset_vs_rt_slope": 0.1275843604910333,
+  "ramp_lead_median_s": 1.8999999713897706
+ },
+ "plots_skipped": {}
+}

@@ -1,0 +1,19 @@
+step 200, loss: 0.01516935508698225
+step 400, loss: 0.013439239002764225
+step 600, loss: 0.013178737834095955
+step 800, loss: 0.01298022735863924
+step 1000, loss: 0.01338964980095625
+step 1200, loss: 0.012949417345225811
+step 1400, loss: 0.013345517218112946
+step 1600, loss: 0.012853152118623257
+step 1800, loss: 0.01266744825989008
+step 2000, loss: 0.012559150345623493
+/home/dsvedberg/Documents/CodeVault/cbtModel/plotting_functions.py:27: UserWarning: FigureCanvasAgg is non-interactive, and thus cannot be shown
+  plt.show()
+{
+ "seed": 57,
+ "best_logged_loss": 0.012559150345623493,
+ "best_step": 2000,
+ "final_logged_loss": 0.012559150345623493,
+ "frac_steps_below_0p010": 0.0145
+}
